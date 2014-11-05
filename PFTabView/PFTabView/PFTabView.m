@@ -277,10 +277,10 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSUInteger);
 
     //自定义文本尺寸
     CGSize textSize;
-    if (!self.delegate && self.textSizeOfItemBlock) {//监听块并回调
-        textSize = self.textSizeOfItemBlock(self);
-    } else if ([self.delegate respondsToSelector:@selector(textSizeOfItemInTabView:)]) {//监听代理并回调
+    if ([self.delegate respondsToSelector:@selector(textSizeOfItemInTabView:)]) {//监听代理并回调
         textSize = [self.delegate textSizeOfItemInTabView:self];
+    } else if (self.textSizeOfItemBlock) {//监听块并回调
+        textSize = self.textSizeOfItemBlock(self);
     } else {
         if (!self.heightOfItem) textSize = CGSizeMake(320 / 4, kHeightOfItem);
         else textSize = CGSizeMake(320 / 4, self.heightOfItem);
@@ -296,7 +296,7 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSUInteger);
         //设置按钮尺寸
         if (!self.heightOfItem) button.frame = CGRectMake(xOffset, 0, textSize.width, kHeightOfItem);
         else button.frame = CGRectMake(xOffset, 0, textSize.width, self.heightOfItem);
-
+        
         //计算下一个标签的位移
         xOffset += kWidthOfButton + textSize.width;
 
@@ -369,10 +369,10 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSUInteger);
                 isRootScroll = NO;
 
                 //响应点击事件
-                if (!self.delegate && self.didSelectItemBlock) {//监听块并回调
-                    self.didSelectItemBlock(self, selectedItem - 100);
-                } else if ([self.delegate respondsToSelector:@selector(tabView:didSelectItemAtIndex:)]) {//监听代理并回调
+                if ([self.delegate respondsToSelector:@selector(tabView:didSelectItemAtIndex:)]) {//监听代理并回调
                     [self.delegate tabView:self didSelectItemAtIndex:selectedItem - 100];
+                } else if (self.didSelectItemBlock) {//监听块并回调
+                    self.didSelectItemBlock(self, selectedItem - 100);
                 }
             }
         }];
@@ -388,19 +388,19 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSUInteger);
 {
     //当滑道左边缘时
     if (rootScrollView.contentOffset.x <= 0) {
-        if (!self.delegate && self.slideToLeftEdgeBlock) {//监听块并回调
-            self.slideToLeftEdgeBlock(self, recognizer);
-        } else if ([self.delegate respondsToSelector:@selector(tabView:slideToLeftEdge:)]) {//监听代理并回调
+        if ([self.delegate respondsToSelector:@selector(tabView:slideToLeftEdge:)]) {//监听代理并回调
             [self.delegate tabView:self slideToLeftEdge:recognizer];
+        } else if (self.slideToLeftEdgeBlock) {//监听块并回调
+            self.slideToLeftEdgeBlock(self, recognizer);
         }
     }
 
     //当滑道右边缘时
     else if (rootScrollView.contentOffset.x >= rootScrollView.contentSize.width - rootScrollView.bounds.size.width) {
-        if (!self.delegate && self.slideToRightEdgeBlock) {//监听块并回调
-            self.slideToRightEdgeBlock(self, recognizer);
-        } else if ([self.delegate respondsToSelector:@selector(tabView:slideToRightEdge:)]) {//监听代理并回调
+        if ([self.delegate respondsToSelector:@selector(tabView:slideToRightEdge:)]) {//监听代理并回调
             [self.delegate tabView:self slideToRightEdge:recognizer];
+        } else if (self.slideToRightEdgeBlock) {//监听块并回调
+            self.slideToRightEdgeBlock(self, recognizer);
         }
     }
 }
@@ -434,6 +434,23 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSUInteger);
         if (contentOffsetX < scrollView.contentOffset.x) isLeftScroll = YES;
         else isLeftScroll = NO;
     }
+}
+
+#pragma mark - Memory Management
+
+- (void)dealloc
+{
+#if __has_feature(objc_arc)
+    self.numberOfItemBlock = nil;
+    self.viewControllerOfItemBlock = nil;
+    self.textSizeOfItemBlock = nil;
+    self.slideToLeftEdgeBlock = nil;
+    self.slideToRightEdgeBlock = nil;
+    self.didSelectItemBlock = nil;
+
+    self.delegate = nil;
+#else
+#endif
 }
 
 /*
