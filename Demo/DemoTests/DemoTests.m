@@ -1,18 +1,18 @@
 //
-//  PFTabViewTests.m
-//  PFTabViewTests
+//  DemoTests.m
+//  DemoTests
 //
-//  Created by PFei_He on 14-10-24.
-//  Copyright (c) 2014年 PFei_He. All rights reserved.
+//  Created by PFei_He on 14-11-28.
+//  Copyright (c) 2014年 PF-Lib. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>
 
-@interface PFTabViewTests : XCTestCase
+@interface DemoTests : XCTestCase
 
 @end
 
-@implementation PFTabViewTests
+@implementation DemoTests
 
 - (void)setUp
 {
