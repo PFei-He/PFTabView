@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CE1A8EE61A2BF5DB00440567 /* PFTabView.m in Sources */ = {isa = PBXBuildFile; fileRef = CE1A8EE51A2BF5DB00440567 /* PFTabView.m */; };
 		CE1B3EDB1A287C19006DF1B3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE1B3EDA1A287C19006DF1B3 /* Foundation.framework */; };
 		CE1B3EDD1A287C19006DF1B3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE1B3EDC1A287C19006DF1B3 /* CoreGraphics.framework */; };
 		CE1B3EDF1A287C19006DF1B3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE1B3EDE1A287C19006DF1B3 /* UIKit.framework */; };
@@ -21,7 +22,6 @@
 		CE1B3F001A287C1A006DF1B3 /* DemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CE1B3EFF1A287C1A006DF1B3 /* DemoTests.m */; };
 		CE1B3F0C1A287C60006DF1B3 /* RootVC.m in Sources */ = {isa = PBXBuildFile; fileRef = CE1B3F0B1A287C60006DF1B3 /* RootVC.m */; };
 		CE1B3F0F1A287C7B006DF1B3 /* BaseVC.m in Sources */ = {isa = PBXBuildFile; fileRef = CE1B3F0E1A287C7B006DF1B3 /* BaseVC.m */; };
-		CE1B3F131A287D01006DF1B3 /* PFTabView.m in Sources */ = {isa = PBXBuildFile; fileRef = CE1B3F121A287D01006DF1B3 /* PFTabView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +35,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CE1A8EE41A2BF5DB00440567 /* PFTabView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PFTabView.h; sourceTree = "<group>"; };
+		CE1A8EE51A2BF5DB00440567 /* PFTabView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PFTabView.m; sourceTree = "<group>"; };
 		CE1B3ED71A287C19006DF1B3 /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE1B3EDA1A287C19006DF1B3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CE1B3EDC1A287C19006DF1B3 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -55,8 +57,6 @@
 		CE1B3F0B1A287C60006DF1B3 /* RootVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootVC.m; sourceTree = "<group>"; };
 		CE1B3F0D1A287C7B006DF1B3 /* BaseVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseVC.h; sourceTree = "<group>"; };
 		CE1B3F0E1A287C7B006DF1B3 /* BaseVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseVC.m; sourceTree = "<group>"; };
-		CE1B3F111A287D01006DF1B3 /* PFTabView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PFTabView.h; sourceTree = "<group>"; };
-		CE1B3F121A287D01006DF1B3 /* PFTabView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PFTabView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,10 +83,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CE1A8EE31A2BF5DB00440567 /* PFTabView */ = {
+			isa = PBXGroup;
+			children = (
+				CE1A8EE41A2BF5DB00440567 /* PFTabView.h */,
+				CE1A8EE51A2BF5DB00440567 /* PFTabView.m */,
+			);
+			name = PFTabView;
+			path = ../PFTabView;
+			sourceTree = "<group>";
+		};
 		CE1B3ECE1A287C19006DF1B3 = {
 			isa = PBXGroup;
 			children = (
-				CE1B3F101A287D01006DF1B3 /* PFTabView */,
+				CE1A8EE31A2BF5DB00440567 /* PFTabView */,
 				CE1B3EE01A287C19006DF1B3 /* Demo */,
 				CE1B3EF91A287C1A006DF1B3 /* DemoTests */,
 				CE1B3ED91A287C19006DF1B3 /* Frameworks */,
@@ -164,15 +174,6 @@
 				CE1B3F0B1A287C60006DF1B3 /* RootVC.m */,
 			);
 			path = controllers;
-			sourceTree = "<group>";
-		};
-		CE1B3F101A287D01006DF1B3 /* PFTabView */ = {
-			isa = PBXGroup;
-			children = (
-				CE1B3F111A287D01006DF1B3 /* PFTabView.h */,
-				CE1B3F121A287D01006DF1B3 /* PFTabView.m */,
-			);
-			path = PFTabView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -273,7 +274,7 @@
 				CE1B3F0C1A287C60006DF1B3 /* RootVC.m in Sources */,
 				CE1B3EEB1A287C19006DF1B3 /* AppDelegate.m in Sources */,
 				CE1B3EE71A287C19006DF1B3 /* main.m in Sources */,
-				CE1B3F131A287D01006DF1B3 /* PFTabView.m in Sources */,
+				CE1A8EE61A2BF5DB00440567 /* PFTabView.m in Sources */,
 				CE1B3F0F1A287C7B006DF1B3 /* BaseVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
