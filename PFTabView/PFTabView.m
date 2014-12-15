@@ -7,7 +7,7 @@
 //
 //  https://github.com/PFei-He/PFTabView
 //
-//  vesion: v0.2.0
+//  vesion: 0.1.0
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -31,85 +31,70 @@
 #import "PFTabView.h"
 
 static const CGFloat kHeightOfItem = 44.0f;
-static const NSUInteger kTag = 88888888;
+static const CGFloat kWidthOfButton = 7.0f;
+static const CGFloat kFontSizeOfItemButton = 17.0f;
+static const NSUInteger kTagOfMoreButton = 999;
 
-typedef NSInteger (^numberOfItemBlock)(PFTabView *);
-typedef UIViewController *(^viewControllerBlock)(PFTabView *, NSInteger);
-typedef CGSize (^textSizeBlock)(PFTabView *);
-typedef void (^animationsBlock)(PFTabView *);
-typedef void (^resetItemButtonBlock)(PFTabView *, UIButton *, NSInteger);
-typedef void (^scrollToEdgeBlock)(PFTabView *, UIPanGestureRecognizer *, NSString *);
-typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
+//标签个数
+typedef NSUInteger (^numberOfItemBlock)(PFTabView *);
+
+//视图控制器
+typedef UIViewController *(^viewControllerOfItemBlock)(PFTabView *, NSUInteger);
+
+//文本尺寸
+typedef CGSize (^textSizeOfItemBlock)(PFTabView *);
+
+//滑动到边缘事件
+typedef void (^slideToEdgeBlock)(PFTabView *, UIPanGestureRecognizer *);
+
+//点击事件
+typedef void (^didSelectItemBlock)(PFTabView *, NSUInteger);
 
 @interface PFTabView () <UIScrollViewDelegate>
 {
-    UIScrollView    *itemScrollView;        //标签视图
     UIScrollView    *rootScrollView;        //主视图
-    UIView          *line;                  //下边线
+    UIScrollView    *itemScrollView;        //标签视图
+    UIImageView     *shadowImageView;       //阴影图层
+    UIImage         *shadowImage;           //阴影图片
 
+    NSMutableArray  *viewsArray;            //子视图数组
     NSInteger       selectedItem;           //被选的标签
 
-    CGFloat         itemWidth;              //标签总宽度
+    CGFloat         contentOffsetX;         //内容位移的x坐标
 
+    BOOL            isLeftScroll;           //是否左滑动
     BOOL            isRootScroll;           //是否主视图滑动
+    BOOL            isLoadSubviews;         //是否加载了子视图
 }
 
-///标签总数
-@property (nonatomic, copy)     numberOfItemBlock       numberOfItemBlock;
+///标签个数
+@property (nonatomic, copy) numberOfItemBlock           numberOfItemBlock;
 
 ///视图控制器
-@property (nonatomic, copy)     viewControllerBlock     viewControllerBlock;
+@property (nonatomic, copy) viewControllerOfItemBlock   viewControllerOfItemBlock;
 
 ///文本尺寸
-@property (nonatomic, copy)     textSizeBlock           textSizeBlock;
+@property (nonatomic, copy) textSizeOfItemBlock         textSizeOfItemBlock;
 
-///动画
-@property (nonatomic, copy)     animationsBlock         animationsBlock;
+///滑动到左边缘事件
+@property (nonatomic, copy) slideToEdgeBlock            slideToLeftEdgeBlock;
 
-///按钮
-@property (nonatomic, copy)     resetItemButtonBlock    resetItemButtonBlock;
-
-///滑动到边缘事件
-@property (nonatomic, copy)     scrollToEdgeBlock       scrollToEdgeBlock;
+///滑动到右边缘事件
+@property (nonatomic, copy) slideToEdgeBlock            slideToRightEdgeBlock;
 
 ///点击事件
-@property (nonatomic, copy)     didSelectItemBlock      didSelectItemBlock;
-
-///代理
-@property (nonatomic, weak)     id<PFTabViewDelegate>   delegate;
+@property (nonatomic, copy) didSelectItemBlock          didSelectItemBlock;
 
 @end
 
 @implementation PFTabView
 
-#pragma mark - Initialization
-
 - (id)initWithFrame:(CGRect)frame delegate:(id<PFTabViewDelegate>)delegate
 {
     self = [super initWithFrame:frame];
     if (self) {
-        
+
         //标签滚动视图
-        [self setupItemScrollView];
-        
-        //主滚动视图
-        [self setupRootScrollView];
-        
-        //设置代理
-        if (delegate) self.delegate = delegate, delegate = nil;
-        
-        //底部边线
-        [self setupBottomBorderline];
-    }
-    return self;
-}
-
-#pragma mark - Views Management
-
-//设置标签滚动视图
-- (void)setupItemScrollView
-{
-    if (!itemScrollView) {
         itemScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, kHeightOfItem)];
         itemScrollView.delegate = self;
         itemScrollView.pagingEnabled = NO;
@@ -117,24 +102,11 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
         itemScrollView.showsHorizontalScrollIndicator = NO;
         itemScrollView.autoresizesSubviews = UIViewAutoresizingFlexibleWidth;
         [self addSubview:itemScrollView];
-    }
-    
-    //标记被选标签
-    selectedItem = kTag;
-}
 
-//设置下边线
-- (void)setupBottomBorderline
-{
-    line = [[UIView alloc] initWithFrame:CGRectMake(line.frame.origin.x, itemScrollView.frame.size.height - 0.5f, itemWidth, 0.5f)];
-    line.backgroundColor = [UIColor blackColor];
-    [itemScrollView addSubview:line];
-}
+        //标记被选的标签为100
+        selectedItem = 100;
 
-//设置主滚动视图
-- (void)setupRootScrollView
-{
-    if (!rootScrollView) {
+        //主滚动视图
         rootScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(self.bounds.origin.x, kHeightOfItem, self.bounds.size.width, self.bounds.size.height - kHeightOfItem)];
         rootScrollView.delegate = self;
         rootScrollView.pagingEnabled = YES;
@@ -143,114 +115,75 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
         rootScrollView.showsHorizontalScrollIndicator = NO;
         rootScrollView.showsVerticalScrollIndicator = NO;
         rootScrollView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
+        contentOffsetX = 0;
         [self addSubview:rootScrollView];
-        
+
+        //视图数组
+        viewsArray = [[NSMutableArray alloc] init];
+
+        //设置为未加载了子视图
+        isLoadSubviews = NO;
+
         //添加滑动事件
-        [rootScrollView.panGestureRecognizer addTarget:self action:@selector(pan:)];
+        [rootScrollView.panGestureRecognizer addTarget:self action:@selector(slideToEdge:)];
+
+        //设置代理
+        if (delegate) self.delegate = delegate;
+    }
+    return self;
+}
+
+#pragma mark - Property Methods
+
+//标签高度的setter方法
+- (void)setHeightOfItem:(CGFloat)heightOfItem
+{
+    if (heightOfItem) {
+        _heightOfItem = heightOfItem;
+        itemScrollView.frame = CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, heightOfItem);
+        rootScrollView.frame = CGRectMake(self.bounds.origin.x, heightOfItem, self.bounds.size.width, self.bounds.size.height - heightOfItem);
     }
 }
 
-#pragma mark - Private Methods
-
-//布局视图
-- (void)layoutSubviews
+//更多按钮的Setter方法
+- (void)setMoreButton:(UIButton *)moreButton
 {
-    NSInteger number;
-    self.delegate?
-    (number = [self.delegate numberOfItemInTabView:self]):
-    self.numberOfItemBlock?
-    (number = self.numberOfItemBlock(self)):
-    (NSLog(@"Missing value number of item"));
-
-    CGSize textSize;
-    self.delegate?
-    (textSize = [self.delegate textSizeOfItemInTabView:self]):
-    self.textSizeBlock?
-    (textSize = self.textSizeBlock(self)):
-    (NSLog(@"Missing value text size"));
-    
-    //加载子视图
-    [self loadSubviewsWithNumber:number textSize:textSize];
-
-    //设置标签视图尺寸
-    itemScrollView.frame = CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, textSize.height);
-
-    //设置主视图尺寸
-    rootScrollView.frame = CGRectMake(self.bounds.origin.x, textSize.height, self.bounds.size.width, self.bounds.size.height - textSize.height);
-
-    //设置下边线尺寸
-    line.frame = CGRectMake(line.frame.origin.x, itemScrollView.frame.size.height - 0.5f, itemWidth, 0.5f);
-
-    //设置主视图滚动页尺寸
-    rootScrollView.contentSize = CGSizeMake(self.bounds.size.width * number, 0);
-
-    //滚动到被选视图
-    [rootScrollView setContentOffset:CGPointMake((selectedItem - kTag) * self.bounds.size.width, 0) animated:NO];
-
-    //调整标签被选位置
-    UIButton *button = (UIButton *)[itemScrollView viewWithTag:selectedItem];
-    [self adjustItemScrollViewPointX:button];
-}
-
-//加载子视图
-- (void)loadSubviewsWithNumber:(NSInteger)number textSize:(CGSize)textSize
-{
-    for (int i = 0; i < number; i++) {//加载视图控制器
-        UIViewController *viewController = (self.delegate ? [self.delegate tabView:self setupViewControllerAtIndex:i] : self.viewControllerBlock(self, i));
-        viewController.view.frame = CGRectMake(0 + rootScrollView.bounds.size.width * i, 0, rootScrollView.bounds.size.width, rootScrollView.bounds.size.height);
-        [rootScrollView addSubview:viewController.view];
-
-
-        //加载标签
-        [self loadItemWithViewController:viewController textSize:textSize index:i];
-    }
-}
-
-//加载标签
-- (void)loadItemWithViewController:(UIViewController *)viewController textSize:(CGSize)textSize index:(NSInteger)index;
-{
-    //设置按钮
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    [button setTitle:viewController.title forState:UIControlStateNormal];
-    [button setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-    [button setTitleColor:[UIColor blackColor] forState:UIControlStateSelected];
-    [button addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
-    button.frame = CGRectMake(itemWidth, 0, textSize.width, textSize.height ? textSize.height : kHeightOfItem);
-    button.tag = index + kTag;
-    if (index == 0) button.selected = YES;
-    
-    //重设按钮
-    if ([self.delegate respondsToSelector:@selector(tabView:resetItemButton:atIndex:)]) {//监听代理并回调
-        [self.delegate tabView:self resetItemButton:button atIndex:index];
-    } else if (self.resetItemButtonBlock) {//监听块并回调
-        self.resetItemButtonBlock(self, button, index);
-    }
-    [itemScrollView addSubview:button]; button = nil;
-    
-    //标签总宽度
-    itemWidth += textSize.width;
-    
-    //设置顶部滚动视图内容页尺寸
-    itemScrollView.contentSize = CGSizeMake(itemWidth, textSize.height ? textSize.height : kHeightOfItem);
-}
-
-//调整标签视图的x坐标
-- (void)adjustItemScrollViewPointX:(UIButton *)button
-{
-    //标签文字超出右边界
-    if (button.frame.origin.x - itemScrollView.contentOffset.x > self.bounds.size.width - button.bounds.size.width) {
-        //向左滚动视图，显示完整标签文字
-        [itemScrollView setContentOffset:CGPointMake(button.frame.origin.x - (itemScrollView.bounds.size.width - button.bounds.size.width), 0) animated:YES];
-    }
-    
-    //如果（标签的文字坐标 - 当前滚动视图左边界所在整个视图的x坐标）< 按钮的隔间 ，代表标签文字已超出边界
-    if (button.frame.origin.x - itemScrollView.contentOffset.x < 0.0f) {
-        //向右滚动视图（标签文字的x坐标 - 按钮间隔 = 新的滚动视图左边界在整个视图的x坐标），显示完整标签文字
-        [itemScrollView setContentOffset:CGPointMake(button.frame.origin.x, 0)  animated:YES];
-    }
+    UIButton *button = (UIButton *)[self viewWithTag:kTagOfMoreButton];
+    [button removeFromSuperview];
+    if (NULL == moreButton) return;
+    moreButton.tag = kTagOfMoreButton;
+    _moreButton = moreButton;
+    [self addSubview:_moreButton];
 }
 
 #pragma mark - Public Methods
+
+//加载子视图
+- (void)loadSubviews
+{
+    //设置视图数
+    NSUInteger number;
+    if (!self.delegate && self.numberOfItemBlock) number = self.numberOfItemBlock(self);
+    else number = [self.delegate numberOfItemInTabView:self];
+
+    for (int i = 0; i < number; i++) {
+        //加载视图控制器
+        UIViewController *vc;
+        if (!self.delegate && self.viewControllerOfItemBlock) vc = self.viewControllerOfItemBlock(self, i);
+        else vc = [self.delegate tabView:self viewControllerOfItemAtIndex:i];
+        [viewsArray addObject:vc];
+        [rootScrollView addSubview:vc.view];
+    }
+
+    //加载标签
+    [self loadItem];
+
+    //设置为已加载子视图
+    isLoadSubviews = YES;
+
+    //创建子视图完成后调整布局
+    [self setNeedsDisplay];
+}
 
 //通过16进制计算颜色
 + (UIColor *)colorFromHexRGB:(NSString *)string
@@ -274,48 +207,156 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
     return result;
 }
 
-#pragma mark -
-
-//标签总数
-- (void)numberOfItemUsingBlock:(NSInteger (^)(PFTabView *tabView))block;
+//标签的个数
+- (void)numberOfItemInTabViewUsingBlock:(NSUInteger (^)(PFTabView *))block
 {
     if (block) self.numberOfItemBlock = block, block = nil;
 }
 
-//视图控制器
-- (void)setupViewControllerUsingBlock:(UIViewController *(^)(PFTabView *, NSInteger))block
+//设置视图控制器
+- (void)viewControllerOfItemAtIndexUsingBlock:(UIViewController *(^)(PFTabView *, NSUInteger))block
 {
-    if (block) self.viewControllerBlock = block, block = nil;
+    if (block) self.viewControllerOfItemBlock = block, block = nil;
 }
 
-//文本尺寸
-- (void)textSizeOfItemUsingBlock:(CGSize (^)(PFTabView *))block
+//调整文本尺寸
+- (void)textSizeOfItemInTabViewUsingBlock:(CGSize (^)(PFTabView *))block
 {
-    if (block) self.textSizeBlock = block, block = nil;
+    if (block) self.textSizeOfItemBlock = block, block = nil;
 }
 
-//动画效果
-- (void)animationsWhenItemWillSelectUsingBlock:(void (^)(PFTabView *))block
+//滑动到左边缘事件
+- (void)slideToLeftEdgeUsingBlock:(void (^)(PFTabView *, UIPanGestureRecognizer *))block
 {
-    if (block) self.animationsBlock = block, block = nil;
+    if (block) self.slideToLeftEdgeBlock = block, block = nil;
 }
 
-//按钮
-- (void)resetItemButtonUsingBlock:(void (^)(PFTabView *, UIButton *, NSInteger))block
+//滑动到右边缘事件
+- (void)slideToRightEdgeUsingBlock:(void (^)(PFTabView *, UIPanGestureRecognizer *))block
 {
-    if (block) self.resetItemButtonBlock = block, block = nil;
+    if (block) self.slideToRightEdgeBlock = block, block = nil;
 }
 
-//滑动到边缘
-- (void)scrollViewDidScrollToEdgeUsingBlock:(void (^)(PFTabView *, UIPanGestureRecognizer *, NSString *))block
-{
-    if (block) self.scrollToEdgeBlock = block, block = nil;
-}
-
-//点击标签
-- (void)didSelectItemUsingBlock:(void (^)(PFTabView *, NSInteger))block
+//点击标签事件
+- (void)didSelectItemAtIndexUsingBlock:(void (^)(PFTabView *, NSUInteger))block
 {
     if (block) self.didSelectItemBlock = block, block = nil;
+}
+
+#pragma mark - Private Methods
+
+//设置视图（此方法会被执行多次，当横竖屏切换时可通过此方法调整布局）
+- (void)layoutSubviews
+{
+    //子视图加载后调整布局
+    if (isLoadSubviews) {
+        //如果有设置右侧视图，缩小顶部滚动视图的宽度以适应按钮
+        if (self.moreButton.bounds.size.width > 0) {
+            self.moreButton.frame = CGRectMake(self.bounds.size.width - self.moreButton.bounds.size.width, 0, self.moreButton.bounds.size.width, self.moreButton.bounds.size.height);
+            if (!self.heightOfItem) itemScrollView.frame = CGRectMake(0, 0, self.bounds.size.width - self.moreButton.bounds.size.width, kHeightOfItem);
+            else itemScrollView.frame = CGRectMake(0, 0, self.bounds.size.width - self.moreButton.bounds.size.width, self.heightOfItem);
+        }
+
+        //更新主视图的总宽度
+        rootScrollView.contentSize = CGSizeMake(self.bounds.size.width * viewsArray.count, 0);
+
+        //更新主视图各个子视图的宽度
+        for (int i = 0; i < [viewsArray count]; i++) {
+            UIViewController *listVC = viewsArray[i];
+            listVC.view.frame = CGRectMake(0 + rootScrollView.bounds.size.width * i, 0, rootScrollView.bounds.size.width, rootScrollView.bounds.size.height);
+        }
+
+        //滚动到选中的视图
+        [rootScrollView setContentOffset:CGPointMake((selectedItem - 100)*self.bounds.size.width, 0) animated:NO];
+
+        //调整标签到选中的位置
+        UIButton *button = (UIButton *)[itemScrollView viewWithTag:selectedItem];
+        [self adjustItemScrollViewPointX:button];
+    }
+}
+
+//加载标签
+- (void)loadItem
+{
+    //下边框着色
+    UIImageView *bottomBorderImageView = [[UIImageView alloc] init];
+    float height = itemScrollView.frame.size.height - 0.5f;
+    float width = itemScrollView.frame.size.width;
+    bottomBorderImageView.frame = CGRectMake(0, height, width, 0.5f);
+    bottomBorderImageView.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1.0f];
+    [itemScrollView addSubview:bottomBorderImageView];
+
+    //阴影图层
+    shadowImageView = [[UIImageView alloc] init];
+    [shadowImageView setImage:shadowImage];
+    [itemScrollView addSubview:shadowImageView];
+
+    //标签长度
+    CGFloat itemWidth = kWidthOfButton;
+
+    //位移长度
+    CGFloat xOffset = kWidthOfButton;
+
+    //自定义文本尺寸
+    CGSize textSize;
+    if ([self.delegate respondsToSelector:@selector(textSizeOfItemInTabView:)]) {//监听代理并回调
+        textSize = [self.delegate textSizeOfItemInTabView:self];
+    } else if (self.textSizeOfItemBlock) {//监听块并回调
+        textSize = self.textSizeOfItemBlock(self);
+    } else {
+        if (!self.heightOfItem) textSize = CGSizeMake(320 / 4, kHeightOfItem);
+        else textSize = CGSizeMake(320 / 4, self.heightOfItem);
+    }
+
+    for (int i = 0; i < viewsArray.count; i++) {
+        UIViewController *vc = viewsArray[i];
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+
+        //累计每个标签文字的长度
+        itemWidth += kWidthOfButton + textSize.width;
+
+        //设置按钮尺寸
+        if (!self.heightOfItem) button.frame = CGRectMake(xOffset, 0, textSize.width, kHeightOfItem);
+        else button.frame = CGRectMake(xOffset, 0, textSize.width, self.heightOfItem);
+        
+        //计算下一个标签的位移
+        xOffset += kWidthOfButton + textSize.width;
+
+        //设置按钮的标记值
+        button.tag = i + 100;
+
+        if (i == 0) {
+            shadowImageView.frame = CGRectMake(kWidthOfButton, 0, textSize.width, shadowImage.size.height);
+            button.selected = YES;
+        }
+        [button setTitle:vc.title forState:UIControlStateNormal];
+        button.titleLabel.font = [UIFont systemFontOfSize:kFontSizeOfItemButton];
+        [button setTitleColor:self.itemNormalColor forState:UIControlStateNormal];
+        [button setTitleColor:self.itemSelectedColor forState:UIControlStateSelected];
+        [button setBackgroundImage:self.itemNormalBackgroundImage forState:UIControlStateNormal];
+        [button setBackgroundImage:self.itemSelectedBackgroundImage forState:UIControlStateSelected];
+        [button addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
+        [itemScrollView addSubview:button];
+    }
+    //设置顶部滚动视图的内容总尺寸
+    if (!self.heightOfItem) itemScrollView.contentSize = CGSizeMake(itemWidth, kHeightOfItem);
+    else itemScrollView.contentSize = CGSizeMake(itemWidth, self.heightOfItem);
+}
+
+//调整标签视图的x坐标
+- (void)adjustItemScrollViewPointX:(UIButton *)button
+{
+    //如果 当前显示的最后一个标签文字超出右边界
+    if (button.frame.origin.x - itemScrollView.contentOffset.x > self.bounds.size.width - (kWidthOfButton + button.bounds.size.width)) {
+        //向左滚动视图，显示完整标签文字
+        [itemScrollView setContentOffset:CGPointMake(button.frame.origin.x - (itemScrollView.bounds.size.width -  (kWidthOfButton + button.bounds.size.width)), 0)  animated:YES];
+    }
+
+    //如果（标签的文字坐标 - 当前滚动视图左边界所在整个视图的x坐标）< 按钮的隔间 ，代表标签文字已超出边界
+    if (button.frame.origin.x - itemScrollView.contentOffset.x < kWidthOfButton) {
+        //向右滚动视图（标签文字的x坐标 - 按钮间隔 = 新的滚动视图左边界在整个视图的x坐标），显示完整标签文字
+        [itemScrollView setContentOffset:CGPointMake(button.frame.origin.x - kWidthOfButton, 0)  animated:YES];
+    }
 }
 
 #pragma mark - Events Management
@@ -335,55 +376,64 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
         selectedItem = button.tag;
     }
 
-    if (!button.selected) {//按钮选中状态
+    //按钮选中状态
+    if (!button.selected) {
         button.selected = YES;
 
         [UIView animateWithDuration:0.25 animations:^{
-            //动画效果
-            if ([self.delegate respondsToSelector:@selector(animationsWhenItemWillSelectInTabView:)]) {
-                [self.delegate animationsWhenItemWillSelectInTabView:self];
-            } else if (self.animationsBlock) {
-                self.animationsBlock(self);
-            }
+            [shadowImageView setFrame:CGRectMake(button.frame.origin.x, 0, button.frame.size.width, shadowImage.size.height)];
         } completion:^(BOOL finished) {
             if (finished) {
-                if (!isRootScroll) {//设置新标签页出现
-                    [rootScrollView setContentOffset:CGPointMake((button.tag - kTag) * self.bounds.size.width, 0) animated:YES];
+                //设置新标签页出现
+                if (!isRootScroll) {
+                    [rootScrollView setContentOffset:CGPointMake((button.tag - 100) * self.bounds.size.width, 0) animated:YES];
                 }
                 isRootScroll = NO;
 
                 //响应点击事件
                 if ([self.delegate respondsToSelector:@selector(tabView:didSelectItemAtIndex:)]) {//监听代理并回调
-                    [self.delegate tabView:self didSelectItemAtIndex:selectedItem - kTag];
+                    [self.delegate tabView:self didSelectItemAtIndex:selectedItem - 100];
                 } else if (self.didSelectItemBlock) {//监听块并回调
-                    self.didSelectItemBlock(self, selectedItem - kTag);
+                    self.didSelectItemBlock(self, selectedItem - 100);
                 }
             }
         }];
-    } else {//重复点击选中按钮
+    }
+    //重复点击选中按钮
+    else {
 
     }
 }
 
-//滑动事件
--(void)pan:(UIPanGestureRecognizer *)recognizer
+//传递滑动事件
+-(void)slideToEdge:(UIPanGestureRecognizer *)recognizer
 {
-    if (rootScrollView.contentOffset.x <= 0) {//滑道左边缘时
-        if ([self.delegate respondsToSelector:@selector(tabView:scrollViewDidScrollToEdgeWithRecognizer:orientation:)]) {//监听代理并回调
-            [self.delegate tabView:self scrollViewDidScrollToEdgeWithRecognizer:recognizer orientation:@"left"];
-        } else if (self.scrollToEdgeBlock) {//监听块并回调
-            self.scrollToEdgeBlock(self, recognizer, @"left");
+    //当滑道左边缘时
+    if (rootScrollView.contentOffset.x <= 0) {
+        if ([self.delegate respondsToSelector:@selector(tabView:slideToLeftEdge:)]) {//监听代理并回调
+            [self.delegate tabView:self slideToLeftEdge:recognizer];
+        } else if (self.slideToLeftEdgeBlock) {//监听块并回调
+            self.slideToLeftEdgeBlock(self, recognizer);
         }
-    } else if (rootScrollView.contentOffset.x >= rootScrollView.contentSize.width - rootScrollView.bounds.size.width) {//滑道右边缘时
-        if ([self.delegate respondsToSelector:@selector(tabView:scrollViewDidScrollToEdgeWithRecognizer:orientation:)]) {//监听代理并回调
-            [self.delegate tabView:self scrollViewDidScrollToEdgeWithRecognizer:recognizer orientation:@"right"];
-        } else if (self.scrollToEdgeBlock) {//监听块并回调
-            self.scrollToEdgeBlock(self, recognizer, @"right");
+    }
+
+    //当滑道右边缘时
+    else if (rootScrollView.contentOffset.x >= rootScrollView.contentSize.width - rootScrollView.bounds.size.width) {
+        if ([self.delegate respondsToSelector:@selector(tabView:slideToRightEdge:)]) {//监听代理并回调
+            [self.delegate tabView:self slideToRightEdge:recognizer];
+        } else if (self.slideToRightEdgeBlock) {//监听块并回调
+            self.slideToRightEdgeBlock(self, recognizer);
         }
     }
 }
 
 #pragma mark - UIScrollViewDelegate
+
+//开始拖拽
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    if (scrollView == rootScrollView) contentOffsetX = scrollView.contentOffset.x;
+}
 
 //停止减速
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
@@ -391,10 +441,20 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
     if (scrollView == rootScrollView) {
         //设置为主视图滚动
         isRootScroll = YES;
-        
         //调整顶部滑条按钮状态
-        UIButton *button = (UIButton *)[itemScrollView viewWithTag:(NSInteger)scrollView.contentOffset.x / self.bounds.size.width + kTag];
+        int tag = (int)scrollView.contentOffset.x / self.bounds.size.width + 100;
+        UIButton *button = (UIButton *)[itemScrollView viewWithTag:tag];
         [self buttonTapped:button];
+    }
+}
+
+//滚动
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if (scrollView == rootScrollView) {
+        //判断是左滚动还是右滚动
+        if (contentOffsetX < scrollView.contentOffset.x) isLeftScroll = YES;
+        else isLeftScroll = NO;
     }
 }
 
@@ -403,15 +463,14 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
 - (void)dealloc
 {
 #if __has_feature(objc_arc)
-    self.numberOfItemBlock      = nil;
-    self.viewControllerBlock    = nil;
-    self.textSizeBlock          = nil;
-    self.animationsBlock        = nil;
-    self.resetItemButtonBlock   = nil;
-    self.scrollToEdgeBlock      = nil;
-    self.didSelectItemBlock     = nil;
-    
-    self.delegate               = nil;
+    self.numberOfItemBlock = nil;
+    self.viewControllerOfItemBlock = nil;
+    self.textSizeOfItemBlock = nil;
+    self.slideToLeftEdgeBlock = nil;
+    self.slideToRightEdgeBlock = nil;
+    self.didSelectItemBlock = nil;
+
+    self.delegate = nil;
 #else
 #endif
 }
