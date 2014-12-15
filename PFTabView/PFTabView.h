@@ -7,7 +7,7 @@
 //
 //  https://github.com/PFei-He/PFTabView
 //
-//  vesion: 0.1.0
+//  vesion: 0.2.0
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -35,120 +35,112 @@
 @protocol PFTabViewDelegate <NSObject>
 
 /**
- *  @brief 标签的个数
- *  @return 返回标签的个数
+ *  @brief 设置标签总数
+ *  @return 标签总数
  */
-- (NSUInteger)numberOfItemInTabView:(PFTabView *)tabView;
+- (NSInteger)numberOfItemInTabView:(PFTabView *)tabView;
+
+/**
+ *  @brief 设置文本尺寸
+ *  @return 文本尺寸
+ */
+- (CGSize)textSizeOfItemInTabView:(PFTabView *)tabView;
 
 /**
  *  @brief 设置视图控制器
- *  @param index: 视图的序号
- *  @return 返回视图控制器
+ *  @param index: 序号
+ *  @return 视图控制器
  */
-- (UIViewController *)tabView:(PFTabView *)tabView viewControllerOfItemAtIndex:(NSUInteger)index;
+- (UIViewController *)tabView:(PFTabView *)tabView setupViewControllerAtIndex:(NSInteger)index;
 
 @optional
 
 /**
- *  @brief 调整文本尺寸
- *  @return 返回文本尺寸
+ *  @brief 动画效果
+ *  @detail 当标签即将被选中时
  */
-- (CGSize)textSizeOfItemInTabView:(PFTabView *)slideSwitchView;
+- (void)animationsWhenItemWillSelectInTabView:(PFTabView *)tabView;
 
 /**
- *  @brief 滑动到左边缘
- *  @param recognizer: 滑动事件
+ *  @brief 重设标签按钮
+ *  @param button: 按钮
+ *  @param index: 序号
  */
-- (void)tabView:(PFTabView *)tabView slideToLeftEdge:(UIPanGestureRecognizer *)recognizer;
+- (UIButton *)tabView:(PFTabView *)tabView resetItemButton:(UIButton *)button atIndex:(NSInteger)index;
 
 /**
- *  @brief 滑动到右边缘
- *  @param recognizer: 滑动事件
+ *  @brief 滑动到边缘
+ *  @param recognizer: 滑动手势
+ *  @param orientation: 滑动方向（`left`为左边缘，`right`为右边缘）
  */
-- (void)tabView:(PFTabView *)tabView slideToRightEdge:(UIPanGestureRecognizer *)recognizer;
+- (void)tabView:(PFTabView *)tabView scrollViewDidScrollToEdgeWithRecognizer:(UIPanGestureRecognizer *)recognizer orientation:(NSString *)orientation;
 
 /**
  *  @brief 点击标签
- *  @param index: 点击事件的序号
+ *  @param index: 序号
  */
-- (void)tabView:(PFTabView *)tabView didSelectItemAtIndex:(NSUInteger)index;
+- (void)tabView:(PFTabView *)tabView didSelectItemAtIndex:(NSInteger)index;
 
 @end
 
 @interface PFTabView : UIView
 
-///标签的高度
-@property (nonatomic, assign) CGFloat               heightOfItem;
-
-///更多按钮
-@property (nonatomic, strong) UIButton              *moreButton;
-
-///正常时标签文字颜色
-@property (nonatomic, strong) UIColor               *itemNormalColor;
-
-///选中时标签文字颜色
-@property (nonatomic, strong) UIColor               *itemSelectedColor;
-
-///正常时标签的背景
-@property (nonatomic, strong) UIImage               *itemNormalBackgroundImage;
-
-///选中时标签的背景
-@property (nonatomic, strong) UIImage               *itemSelectedBackgroundImage;
-
-///代理
-@property (nonatomic, weak) id<PFTabViewDelegate>   delegate;
-
 /**
  *  @brief 初始化
- *  @param delegate: 代理（使用块方法时设为nil）
+ *  @param delegate: 代理（不使用代理方法时设为nil）
  */
 - (id)initWithFrame:(CGRect)frame delegate:(id<PFTabViewDelegate>)delegate;
-
-/**
- *  @brief 加载子视图
- */
-- (void)loadSubviews;
 
 /**
  *  @brief 设置颜色（通过16进制计算）
  */
 + (UIColor *)colorFromHexRGB:(NSString *)string;
 
+#pragma mark -
+
 /**
- *  @brief 标签的个数（使用块方法时必须执行该方法）
- *  @return 返回标签的个数
+ *  @brief 设置标签总数（使用块方法时必须执行该方法）
+ *  @return 标签总数
  */
-- (void)numberOfItemInTabViewUsingBlock:(NSUInteger (^)(PFTabView *tabView))block;
+- (void)numberOfItemUsingBlock:(NSInteger (^)(PFTabView *tabView))block;
 
 /**
  *  @brief 设置视图控制器（使用块方法时必须执行该方法）
- *  @param index: 视图的序号
- *  @return 返回视图控制器
+ *  @param index: 序号
+ *  @return 视图控制器
  */
-- (void)viewControllerOfItemAtIndexUsingBlock:(UIViewController *(^)(PFTabView *tabView, NSUInteger index))block;
+- (void)setupViewControllerUsingBlock:(UIViewController *(^)(PFTabView *tabView, NSInteger index))block;
 
 /**
- *  @brief 调整文本尺寸
- *  @return 返回文本尺寸
+ *  @brief 设置文本尺寸（使用块方法时必须执行该方法）
+ *  @return 文本尺寸
  */
-- (void)textSizeOfItemInTabViewUsingBlock:(CGSize (^)(PFTabView *tabView))block;
+- (void)textSizeOfItemUsingBlock:(CGSize (^)(PFTabView *tabView))block;
 
 /**
- *  @brief 滑动到左边缘
- *  @param recognizer: 滑动事件
+ *  @brief 动画效果
+ *  @detail 当标签即将被选中时
  */
-- (void)slideToLeftEdgeUsingBlock:(void (^)(PFTabView *tabView, UIPanGestureRecognizer *recognizer))block;
+- (void)animationsWhenItemWillSelectUsingBlock:(void (^)(PFTabView *tabView))block;
 
 /**
- *  @brief 滑动到右边缘
- *  @param recognizer: 滑动事件
+ *  @brief 重设标签按钮
+ *  @param button: 按钮
+ *  @param index: 序号
  */
-- (void)slideToRightEdgeUsingBlock:(void (^)(PFTabView *tabView, UIPanGestureRecognizer *recognizer))block;
+- (void)resetItemButtonUsingBlock:(void (^)(PFTabView *tabView, UIButton *button, NSInteger index))block;
+
+/**
+ *  @brief 滑动到边缘
+ *  @param recognizer: 滑动手势
+ *  @param orientation: 滑动方向（`left`为左边缘，`right`为右边缘）
+ */
+- (void)scrollViewDidScrollToEdgeUsingBlock:(void (^)(PFTabView *tabView, UIPanGestureRecognizer *recognizer, NSString *orientation))block;
 
 /**
  *  @brief 点击标签
- *  @param index: 点击事件的序号
+ *  @param index: 序号
  */
-- (void)didSelectItemAtIndexUsingBlock:(void (^)(PFTabView *tabView, NSUInteger index))block;
+- (void)didSelectItemUsingBlock:(void (^)(PFTabView *tabView, NSInteger index))block;
 
 @end
