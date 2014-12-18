@@ -7,7 +7,7 @@
 //
 //  https://github.com/PFei-He/PFTabView
 //
-//  vesion: 0.2.1-beta1
+//  vesion: 0.2.1-beta2
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -96,7 +96,7 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
         [self setupRootScrollView];
         
         //设置代理
-        if (delegate) self.delegate = delegate, delegate = nil;
+        if (delegate) self.delegate = delegate;
         
         //底部边线
         [self setupBottomBorderline];
@@ -225,7 +225,7 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
     } else if (self.resetItemButtonBlock) {//监听块并回调
         self.resetItemButtonBlock(self, button, index);
     }
-    [itemScrollView addSubview:button]; button = nil;
+    [itemScrollView addSubview:button];
     
     //标签总宽度
     itemWidth += textSize.width;
@@ -279,43 +279,43 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
 //标签总数
 - (void)numberOfItemUsingBlock:(NSInteger (^)(PFTabView *tabView))block;
 {
-    if (block) self.numberOfItemBlock = block, block = nil;
+    if (block) self.numberOfItemBlock = block;
 }
 
 //视图控制器
 - (void)setupViewControllerUsingBlock:(UIViewController *(^)(PFTabView *, NSInteger))block
 {
-    if (block) self.viewControllerBlock = block, block = nil;
+    if (block) self.viewControllerBlock = block;
 }
 
 //文本尺寸
 - (void)textSizeOfItemUsingBlock:(CGSize (^)(PFTabView *))block
 {
-    if (block) self.textSizeBlock = block, block = nil;
+    if (block) self.textSizeBlock = block;
 }
 
 //动画效果
 - (void)animationsWhenItemWillSelectUsingBlock:(void (^)(PFTabView *))block
 {
-    if (block) self.animationsBlock = block, block = nil;
+    if (block) self.animationsBlock = block;
 }
 
 //按钮
 - (void)resetItemButtonUsingBlock:(void (^)(PFTabView *, UIButton *, NSInteger))block
 {
-    if (block) self.resetItemButtonBlock = block, block = nil;
+    if (block) self.resetItemButtonBlock = block;
 }
 
 //滑动到边缘
 - (void)scrollViewDidScrollToEdgeUsingBlock:(void (^)(PFTabView *, UIPanGestureRecognizer *, NSString *))block
 {
-    if (block) self.scrollToEdgeBlock = block, block = nil;
+    if (block) self.scrollToEdgeBlock = block;
 }
 
 //点击标签
 - (void)didSelectItemUsingBlock:(void (^)(PFTabView *, NSInteger))block
 {
-    if (block) self.didSelectItemBlock = block, block = nil;
+    if (block) self.didSelectItemBlock = block;
 }
 
 #pragma mark - Events Management
