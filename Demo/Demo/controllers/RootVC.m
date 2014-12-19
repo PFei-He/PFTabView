@@ -43,13 +43,17 @@
 {
     if (!self.tabView) self.tabView = [[PFTabView alloc] initWithFrame:CGRectMake(0, 0, 320, self.view.frame.size.height - 64) delegate:nil];
 
+    @weakify_self
     [self.tabView numberOfItemUsingBlock:^NSInteger(PFTabView *tabView) {
+        @strongify_self
         return self.viewControllers.count;
     }];
     [self.tabView setupViewControllerUsingBlock:^UIViewController *(PFTabView *tabView, NSInteger index) {
+        @strongify_self
         return self.viewControllers[index];
     }];
     [self.tabView textSizeOfItemUsingBlock:^CGSize(PFTabView *tabView) {
+        @strongify_self
         return CGSizeMake((self.view.frame.size.width) / 4, 30.0f);
     }];
     [self.tabView didSelectItemUsingBlock:^(PFTabView *tabView, NSInteger index) {

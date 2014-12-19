@@ -20,8 +20,8 @@
 		CE1B3EF61A287C1A006DF1B3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE1B3EDE1A287C19006DF1B3 /* UIKit.framework */; };
 		CE1B3EFE1A287C1A006DF1B3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CE1B3EFC1A287C1A006DF1B3 /* InfoPlist.strings */; };
 		CE1B3F001A287C1A006DF1B3 /* DemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CE1B3EFF1A287C1A006DF1B3 /* DemoTests.m */; };
-		CE1B3F0C1A287C60006DF1B3 /* RootVC.m in Sources */ = {isa = PBXBuildFile; fileRef = CE1B3F0B1A287C60006DF1B3 /* RootVC.m */; };
-		CE1B3F0F1A287C7B006DF1B3 /* BaseVC.m in Sources */ = {isa = PBXBuildFile; fileRef = CE1B3F0E1A287C7B006DF1B3 /* BaseVC.m */; };
+		CE2BECD51A43C8B60037E48A /* BaseVC.m in Sources */ = {isa = PBXBuildFile; fileRef = CE2BECD21A43C8B60037E48A /* BaseVC.m */; };
+		CE2BECD61A43C8B60037E48A /* RootVC.m in Sources */ = {isa = PBXBuildFile; fileRef = CE2BECD41A43C8B60037E48A /* RootVC.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,10 +53,10 @@
 		CE1B3EFB1A287C1A006DF1B3 /* DemoTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DemoTests-Info.plist"; sourceTree = "<group>"; };
 		CE1B3EFD1A287C1A006DF1B3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		CE1B3EFF1A287C1A006DF1B3 /* DemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoTests.m; sourceTree = "<group>"; };
-		CE1B3F0A1A287C60006DF1B3 /* RootVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootVC.h; sourceTree = "<group>"; };
-		CE1B3F0B1A287C60006DF1B3 /* RootVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootVC.m; sourceTree = "<group>"; };
-		CE1B3F0D1A287C7B006DF1B3 /* BaseVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseVC.h; sourceTree = "<group>"; };
-		CE1B3F0E1A287C7B006DF1B3 /* BaseVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseVC.m; sourceTree = "<group>"; };
+		CE2BECD11A43C8B60037E48A /* BaseVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseVC.h; sourceTree = "<group>"; };
+		CE2BECD21A43C8B60037E48A /* BaseVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseVC.m; sourceTree = "<group>"; };
+		CE2BECD31A43C8B60037E48A /* RootVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootVC.h; sourceTree = "<group>"; };
+		CE2BECD41A43C8B60037E48A /* RootVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootVC.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,7 +129,7 @@
 			children = (
 				CE1B3EE91A287C19006DF1B3 /* AppDelegate.h */,
 				CE1B3EEA1A287C19006DF1B3 /* AppDelegate.m */,
-				CE1B3F091A287C4E006DF1B3 /* controllers */,
+				CE2BECD01A43C8B60037E48A /* Controllers */,
 				CE1B3EEC1A287C19006DF1B3 /* Images.xcassets */,
 				CE1B3EE11A287C19006DF1B3 /* Supporting Files */,
 			);
@@ -165,15 +165,15 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		CE1B3F091A287C4E006DF1B3 /* controllers */ = {
+		CE2BECD01A43C8B60037E48A /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				CE1B3F0D1A287C7B006DF1B3 /* BaseVC.h */,
-				CE1B3F0E1A287C7B006DF1B3 /* BaseVC.m */,
-				CE1B3F0A1A287C60006DF1B3 /* RootVC.h */,
-				CE1B3F0B1A287C60006DF1B3 /* RootVC.m */,
+				CE2BECD11A43C8B60037E48A /* BaseVC.h */,
+				CE2BECD21A43C8B60037E48A /* BaseVC.m */,
+				CE2BECD31A43C8B60037E48A /* RootVC.h */,
+				CE2BECD41A43C8B60037E48A /* RootVC.m */,
 			);
-			path = controllers;
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -271,11 +271,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE1B3F0C1A287C60006DF1B3 /* RootVC.m in Sources */,
+				CE2BECD61A43C8B60037E48A /* RootVC.m in Sources */,
 				CE1B3EEB1A287C19006DF1B3 /* AppDelegate.m in Sources */,
 				CE1B3EE71A287C19006DF1B3 /* main.m in Sources */,
+				CE2BECD51A43C8B60037E48A /* BaseVC.m in Sources */,
 				CE1A8EE61A2BF5DB00440567 /* PFTabView.m in Sources */,
-				CE1B3F0F1A287C7B006DF1B3 /* BaseVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
