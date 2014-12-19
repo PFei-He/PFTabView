@@ -7,7 +7,7 @@
 //
 //  https://github.com/PFei-He/PFTabView
 //
-//  vesion: 0.2.2
+//  vesion: 0.3.0-beta1
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -33,13 +33,13 @@
 static const CGFloat kHeightOfItem = 44.0f;
 static const NSUInteger kTag = 88888888;
 
-typedef NSInteger (^numberOfItemBlock)(PFTabView *);
-typedef UIViewController *(^viewControllerBlock)(PFTabView *, NSInteger);
-typedef CGSize (^textSizeBlock)(PFTabView *);
-typedef void (^animationsBlock)(PFTabView *);
-typedef void (^resetItemButtonBlock)(PFTabView *, UIButton *, NSInteger);
-typedef void (^scrollToEdgeBlock)(PFTabView *, UIPanGestureRecognizer *, NSString *);
-typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
+typedef NSInteger(^numberOfItemBlock)(void);
+typedef CGSize(^textSizeBlock)(void);
+typedef UIViewController *(^viewControllerBlock)(NSInteger);
+typedef void(^animationsBlock)(void);
+typedef void(^resetItemButtonBlock)(UIButton *, NSInteger);
+typedef void(^scrollToEdgeBlock)(UIPanGestureRecognizer *, NSString *);
+typedef void(^didSelectItemBlock)(NSInteger);
 
 @interface PFTabView () <UIScrollViewDelegate>
 {
@@ -158,7 +158,7 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
     if ([self.delegate respondsToSelector:@selector(numberOfItemInTabView:)]) {
         number = [self.delegate numberOfItemInTabView:self];
     } else if (self.numberOfItemBlock) {
-        number = self.numberOfItemBlock(self);
+        number = self.numberOfItemBlock();
     } else {
         NSLog(@"Missing value number of item");
         return;
@@ -168,7 +168,7 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
     if ([self.delegate respondsToSelector:@selector(textSizeOfItemInTabView:)]) {
         textSize = [self.delegate textSizeOfItemInTabView:self];
     } else if (self.textSizeBlock) {
-        textSize = self.textSizeBlock(self);
+        textSize = self.textSizeBlock();
     } else {
         NSLog(@"Missing value text size");
         return;
@@ -205,7 +205,7 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
         if ([self.delegate respondsToSelector:@selector(tabView:setupViewControllerAtIndex:)]) {
             viewController = [self.delegate tabView:self setupViewControllerAtIndex:i];
         } else if (self.viewControllerBlock) {
-            viewController = self.viewControllerBlock(self, i);
+            viewController = self.viewControllerBlock(i);
         } else {
             NSLog(@"Missing value view controller");
             return;
@@ -235,7 +235,7 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
     if ([self.delegate respondsToSelector:@selector(tabView:resetItemButton:atIndex:)]) {//监听代理并回调
         [self.delegate tabView:self resetItemButton:button atIndex:index];
     } else if (self.resetItemButtonBlock) {//监听块并回调
-        self.resetItemButtonBlock(self, button, index);
+        self.resetItemButtonBlock(button, index);
     }
     [itemScrollView addSubview:button];
     
@@ -289,43 +289,43 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
 #pragma mark -
 
 //标签总数
-- (void)numberOfItemUsingBlock:(NSInteger (^)(PFTabView *tabView))block;
+- (void)numberOfItemUsingBlock:(NSInteger (^)(void))block;
 {
     if (block) self.numberOfItemBlock = block;
 }
 
 //视图控制器
-- (void)setupViewControllerUsingBlock:(UIViewController *(^)(PFTabView *, NSInteger))block
+- (void)setupViewControllerUsingBlock:(UIViewController *(^)(NSInteger))block
 {
     if (block) self.viewControllerBlock = block;
 }
 
 //文本尺寸
-- (void)textSizeOfItemUsingBlock:(CGSize (^)(PFTabView *))block
+- (void)textSizeOfItemUsingBlock:(CGSize (^)(void))block
 {
     if (block) self.textSizeBlock = block;
 }
 
 //动画效果
-- (void)animationsWhenItemWillSelectUsingBlock:(void (^)(PFTabView *))block
+- (void)animationsWhenItemWillSelectUsingBlock:(void (^)(void))block
 {
     if (block) self.animationsBlock = block;
 }
 
 //按钮
-- (void)resetItemButtonUsingBlock:(void (^)(PFTabView *, UIButton *, NSInteger))block
+- (void)resetItemButtonUsingBlock:(void (^)(UIButton *, NSInteger))block
 {
     if (block) self.resetItemButtonBlock = block;
 }
 
 //滑动到边缘
-- (void)scrollViewDidScrollToEdgeUsingBlock:(void (^)(PFTabView *, UIPanGestureRecognizer *, NSString *))block
+- (void)scrollViewDidScrollToEdgeUsingBlock:(void (^)(UIPanGestureRecognizer *, NSString *))block
 {
     if (block) self.scrollToEdgeBlock = block;
 }
 
 //点击标签
-- (void)didSelectItemUsingBlock:(void (^)(PFTabView *, NSInteger))block
+- (void)didSelectItemUsingBlock:(void (^)(NSInteger))block
 {
     if (block) self.didSelectItemBlock = block;
 }
@@ -355,7 +355,7 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
             if ([self.delegate respondsToSelector:@selector(animationsWhenItemWillSelectInTabView:)]) {
                 [self.delegate animationsWhenItemWillSelectInTabView:self];
             } else if (self.animationsBlock) {
-                self.animationsBlock(self);
+                self.animationsBlock();
             }
         } completion:^(BOOL finished) {
             if (finished) {
@@ -368,7 +368,7 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
                 if ([self.delegate respondsToSelector:@selector(tabView:didSelectItemAtIndex:)]) {//监听代理并回调
                     [self.delegate tabView:self didSelectItemAtIndex:selectedItem - kTag];
                 } else if (self.didSelectItemBlock) {//监听块并回调
-                    self.didSelectItemBlock(self, selectedItem - kTag);
+                    self.didSelectItemBlock(selectedItem - kTag);
                 }
             }
         }];
@@ -384,13 +384,13 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
         if ([self.delegate respondsToSelector:@selector(tabView:scrollViewDidScrollToEdgeWithRecognizer:orientation:)]) {//监听代理并回调
             [self.delegate tabView:self scrollViewDidScrollToEdgeWithRecognizer:recognizer orientation:@"left"];
         } else if (self.scrollToEdgeBlock) {//监听块并回调
-            self.scrollToEdgeBlock(self, recognizer, @"left");
+            self.scrollToEdgeBlock(recognizer, @"left");
         }
     } else if (rootScrollView.contentOffset.x >= rootScrollView.contentSize.width - rootScrollView.bounds.size.width) {//滑道右边缘时
         if ([self.delegate respondsToSelector:@selector(tabView:scrollViewDidScrollToEdgeWithRecognizer:orientation:)]) {//监听代理并回调
             [self.delegate tabView:self scrollViewDidScrollToEdgeWithRecognizer:recognizer orientation:@"right"];
         } else if (self.scrollToEdgeBlock) {//监听块并回调
-            self.scrollToEdgeBlock(self, recognizer, @"right");
+            self.scrollToEdgeBlock(recognizer, @"right");
         }
     }
 }

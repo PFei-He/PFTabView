@@ -44,19 +44,19 @@
     if (!self.tabView) self.tabView = [[PFTabView alloc] initWithFrame:CGRectMake(0, 0, 320, self.view.frame.size.height - 64) delegate:nil];
 
     @weakify_self
-    [self.tabView numberOfItemUsingBlock:^NSInteger(PFTabView *tabView) {
+    [self.tabView numberOfItemUsingBlock:^NSInteger{
         @strongify_self
         return self.viewControllers.count;
     }];
-    [self.tabView setupViewControllerUsingBlock:^UIViewController *(PFTabView *tabView, NSInteger index) {
+    [self.tabView setupViewControllerUsingBlock:^UIViewController *(NSInteger index) {
         @strongify_self
         return self.viewControllers[index];
     }];
-    [self.tabView textSizeOfItemUsingBlock:^CGSize(PFTabView *tabView) {
+    [self.tabView textSizeOfItemUsingBlock:^CGSize{
         @strongify_self
         return CGSizeMake((self.view.frame.size.width) / 4, 30.0f);
     }];
-    [self.tabView didSelectItemUsingBlock:^(PFTabView *tabView, NSInteger index) {
+    [self.tabView didSelectItemUsingBlock:^(NSInteger index) {
         if (index == 0) {
             NSLog(@"首页");
         } else if (index == 1) {

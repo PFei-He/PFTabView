@@ -7,7 +7,7 @@
 //
 //  https://github.com/PFei-He/PFTabView
 //
-//  vesion: 0.2.2
+//  vesion: 0.3.0-beta1
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -163,45 +163,45 @@
  *  @brief 设置标签总数（使用块方法时必须执行该方法）
  *  @return 标签总数
  */
-- (void)numberOfItemUsingBlock:(NSInteger (^)(PFTabView *tabView))block;
+- (void)numberOfItemUsingBlock:(NSInteger (^)(void))block;
 
 /**
  *  @brief 设置文本尺寸（使用块方法时必须执行该方法）
  *  @return 文本尺寸
  */
-- (void)textSizeOfItemUsingBlock:(CGSize (^)(PFTabView *tabView))block;
+- (void)textSizeOfItemUsingBlock:(CGSize (^)(void))block;
 
 /**
  *  @brief 设置视图控制器（使用块方法时必须执行该方法）
  *  @param index: 序号
  *  @return 视图控制器
  */
-- (void)setupViewControllerUsingBlock:(UIViewController *(^)(PFTabView *tabView, NSInteger index))block;
+- (void)setupViewControllerUsingBlock:(UIViewController *(^)(NSInteger index))block;
 
 /**
  *  @brief 动画效果
  *  @detail 当标签即将被选中时
  */
-- (void)animationsWhenItemWillSelectUsingBlock:(void (^)(PFTabView *tabView))block;
+- (void)animationsWhenItemWillSelectUsingBlock:(void (^)(void))block;
 
 /**
  *  @brief 重设标签按钮
  *  @param button: 按钮
  *  @param index: 序号
  */
-- (void)resetItemButtonUsingBlock:(void (^)(PFTabView *tabView, UIButton *button, NSInteger index))block;
+- (void)resetItemButtonUsingBlock:(void (^)(UIButton *button, NSInteger index))block;
 
 /**
  *  @brief 滑动到边缘
  *  @param recognizer: 滑动手势
  *  @param orientation: 滑动方向（`left`为左边缘，`right`为右边缘）
  */
-- (void)scrollViewDidScrollToEdgeUsingBlock:(void (^)(PFTabView *tabView, UIPanGestureRecognizer *recognizer, NSString *orientation))block;
+- (void)scrollViewDidScrollToEdgeUsingBlock:(void (^)(UIPanGestureRecognizer *recognizer, NSString *orientation))block;
 
 /**
  *  @brief 点击标签
  *  @param index: 序号
  */
-- (void)didSelectItemUsingBlock:(void (^)(PFTabView *tabView, NSInteger index))block;
+- (void)didSelectItemUsingBlock:(void (^)(NSInteger index))block;
 
 @end
