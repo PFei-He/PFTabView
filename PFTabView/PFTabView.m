@@ -7,7 +7,7 @@
 //
 //  https://github.com/PFei-He/PFTabView
 //
-//  vesion: 0.2.2-beta2
+//  vesion: 0.2.2-beta3
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -409,32 +409,5 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
         [self buttonTapped:button];
     }
 }
-
-#pragma mark - Memory Management
-
-- (void)dealloc
-{
-#if __has_feature(objc_arc)
-    self.numberOfItemBlock      = nil;
-    self.viewControllerBlock    = nil;
-    self.textSizeBlock          = nil;
-    self.animationsBlock        = nil;
-    self.resetItemButtonBlock   = nil;
-    self.scrollToEdgeBlock      = nil;
-    self.didSelectItemBlock     = nil;
-    
-    self.delegate               = nil;
-#else
-#endif
-}
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
 
 @end
