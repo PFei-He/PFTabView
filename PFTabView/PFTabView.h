@@ -7,7 +7,7 @@
 //
 //  https://github.com/PFei-He/PFTabView
 //
-//  vesion: 0.2.1
+//  vesion: 0.2.2-beta1
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -124,7 +124,7 @@
  *  @param button: 按钮
  *  @param index: 序号
  */
-- (UIButton *)tabView:(PFTabView *)tabView resetItemButton:(UIButton *)button atIndex:(NSInteger)index;
+- (void)tabView:(PFTabView *)tabView resetItemButton:(UIButton *)button atIndex:(NSInteger)index;
 
 /**
  *  @brief 滑动到边缘
@@ -163,17 +163,17 @@
 - (void)numberOfItemUsingBlock:(NSInteger (^)(PFTabView *tabView))block;
 
 /**
+ *  @brief 设置文本尺寸（使用块方法时必须执行该方法）
+ *  @return 文本尺寸
+ */
+- (void)textSizeOfItemUsingBlock:(CGSize (^)(PFTabView *tabView))block;
+
+/**
  *  @brief 设置视图控制器（使用块方法时必须执行该方法）
  *  @param index: 序号
  *  @return 视图控制器
  */
 - (void)setupViewControllerUsingBlock:(UIViewController *(^)(PFTabView *tabView, NSInteger index))block;
-
-/**
- *  @brief 设置文本尺寸（使用块方法时必须执行该方法）
- *  @return 文本尺寸
- */
-- (void)textSizeOfItemUsingBlock:(CGSize (^)(PFTabView *tabView))block;
 
 /**
  *  @brief 动画效果

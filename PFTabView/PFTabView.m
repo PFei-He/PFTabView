@@ -7,7 +7,7 @@
 //
 //  https://github.com/PFei-He/PFTabView
 //
-//  vesion: 0.2.1
+//  vesion: 0.2.2-beta1
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -155,7 +155,7 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
 //布局视图
 - (void)layoutSubviews
 {
-    NSInteger number;
+    NSInteger number = 0;
     self.delegate?
     (number = [self.delegate numberOfItemInTabView:self]):
     self.numberOfItemBlock?
