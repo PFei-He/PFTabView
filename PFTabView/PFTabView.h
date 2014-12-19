@@ -7,7 +7,7 @@
 //
 //  https://github.com/PFei-He/PFTabView
 //
-//  vesion: 0.2.2-beta1
+//  vesion: 0.2.2-beta2
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -142,6 +142,9 @@
 @end
 
 @interface PFTabView : UIView
+
+///标签下边线
+@property (nonatomic, strong, readonly) UIView *bottomBorderline;
 
 /**
  *  @brief 初始化

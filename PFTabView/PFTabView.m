@@ -7,7 +7,7 @@
 //
 //  https://github.com/PFei-He/PFTabView
 //
-//  vesion: 0.2.2-beta1
+//  vesion: 0.2.2-beta2
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -45,7 +45,6 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
 {
     UIScrollView    *itemScrollView;        //标签视图
     UIScrollView    *rootScrollView;        //主视图
-    UIView          *line;                  //下边线
 
     NSInteger       selectedItem;           //被选的标签
 
@@ -126,9 +125,9 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
 //设置下边线
 - (void)setupBottomBorderline
 {
-    line = [[UIView alloc] initWithFrame:CGRectMake(line.frame.origin.x, itemScrollView.frame.size.height - 0.5f, itemWidth, 0.5f)];
-    line.backgroundColor = [UIColor blackColor];
-    [itemScrollView addSubview:line];
+    _bottomBorderline = [[UIView alloc] initWithFrame:CGRectMake(self.bounds.origin.x, itemScrollView.frame.size.height - 0.5f, itemWidth, 0.5f)];
+    _bottomBorderline.backgroundColor = [UIColor blackColor];
+    [itemScrollView addSubview:_bottomBorderline];
 }
 
 //设置主滚动视图
@@ -155,19 +154,25 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
 //布局视图
 - (void)layoutSubviews
 {
-    NSInteger number = 0;
-    self.delegate?
-    (number = [self.delegate numberOfItemInTabView:self]):
-    self.numberOfItemBlock?
-    (number = self.numberOfItemBlock(self)):
-    (NSLog(@"Missing value number of item"));
+    NSInteger number = 0;//总数
+    if ([self.delegate respondsToSelector:@selector(numberOfItemInTabView:)]) {
+        number = [self.delegate numberOfItemInTabView:self];
+    } else if (self.numberOfItemBlock) {
+        number = self.numberOfItemBlock(self);
+    } else {
+        NSLog(@"Missing value number of item");
+        return;
+    }
 
-    CGSize textSize;
-    self.delegate?
-    (textSize = [self.delegate textSizeOfItemInTabView:self]):
-    self.textSizeBlock?
-    (textSize = self.textSizeBlock(self)):
-    (NSLog(@"Missing value text size"));
+    CGSize textSize;//标签尺寸
+    if ([self.delegate respondsToSelector:@selector(textSizeOfItemInTabView:)]) {
+        textSize = [self.delegate textSizeOfItemInTabView:self];
+    } else if (self.textSizeBlock) {
+        textSize = self.textSizeBlock(self);
+    } else {
+        NSLog(@"Missing value text size");
+        return;
+    }
     
     //加载子视图
     [self loadSubviewsWithNumber:number textSize:textSize];
@@ -179,7 +184,7 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
     rootScrollView.frame = CGRectMake(self.bounds.origin.x, textSize.height, self.bounds.size.width, self.bounds.size.height - textSize.height);
 
     //设置下边线尺寸
-    line.frame = CGRectMake(line.frame.origin.x, itemScrollView.frame.size.height - 0.5f, itemWidth, 0.5f);
+    _bottomBorderline.frame = CGRectMake(_bottomBorderline.frame.origin.x, itemScrollView.frame.size.height - 0.5f, itemWidth, 0.5f);
 
     //设置主视图滚动页尺寸
     rootScrollView.contentSize = CGSizeMake(self.bounds.size.width * number, 0);
@@ -196,10 +201,17 @@ typedef void (^didSelectItemBlock)(PFTabView *, NSInteger);
 - (void)loadSubviewsWithNumber:(NSInteger)number textSize:(CGSize)textSize
 {
     for (int i = 0; i < number; i++) {//加载视图控制器
-        UIViewController *viewController = (self.delegate ? [self.delegate tabView:self setupViewControllerAtIndex:i] : self.viewControllerBlock(self, i));
+        UIViewController *viewController;
+        if ([self.delegate respondsToSelector:@selector(tabView:setupViewControllerAtIndex:)]) {
+            viewController = [self.delegate tabView:self setupViewControllerAtIndex:i];
+        } else if (self.viewControllerBlock) {
+            viewController = self.viewControllerBlock(self, i);
+        } else {
+            NSLog(@"Missing value view controller");
+            return;
+        }
         viewController.view.frame = CGRectMake(0 + rootScrollView.bounds.size.width * i, 0, rootScrollView.bounds.size.width, rootScrollView.bounds.size.height);
         [rootScrollView addSubview:viewController.view];
-
 
         //加载标签
         [self loadItemWithViewController:viewController textSize:textSize index:i];
