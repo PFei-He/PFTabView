@@ -7,7 +7,7 @@
 //
 //  https://github.com/PFei-He/PFTabView
 //
-//  vesion: 0.3.0-beta1
+//  vesion: 0.3.0-beta2
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -34,13 +34,7 @@
  *  强弱引用转换，用于解决代码块（block）与强引用self之间的循环引用问题
  *  调用方式: `@weakify_self`实现弱引用转换，`@strongify_self`实现强引用转换
  *
- *  示例一：
- *  @weakify_self
- *  [obj block:^{
- *      weakSelf.property = something;
- *  }];
- *
- *  示例二（推荐使用，可防止对象被提前释放）：
+ *  示例：
  *  @weakify_self
  *  [obj block:^{
  *  @strongify_self
