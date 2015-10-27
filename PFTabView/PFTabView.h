@@ -7,7 +7,7 @@
 //
 //  https://github.com/PFei-He/PFTabView
 //
-//  vesion: 0.3.0
+//  vesion: 0.4.0-beta
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -30,57 +30,7 @@
 
 #import <UIKit/UIKit.h>
 
-/**
- *  强弱引用转换，用于解决代码块（block）与强引用self之间的循环引用问题
- *  调用方式: `@weakify_self`实现弱引用转换，`@strongify_self`实现强引用转换
- *
- *  示例：
- *  @weakify_self
- *  [obj block:^{
- *  @strongify_self
- *      self.property = something;
- *  }];
- */
-#ifndef	weakify_self
-    #if __has_feature(objc_arc)
-        #define weakify_self autoreleasepool{} __weak __typeof__(self) weakSelf = self;
-    #else
-        #define weakify_self autoreleasepool{} __block __typeof__(self) blockSelf = self;
-    #endif
-#endif
-#ifndef	strongify_self
-    #if __has_feature(objc_arc)
-        #define strongify_self try{} @finally{} __typeof__(weakSelf) self = weakSelf;
-    #else
-        #define strongify_self try{} @finally{} __typeof__(blockSelf) self = blockSelf;
-    #endif
-#endif
-
-/**
- *  强弱引用转换，用于解决代码块（block）与强引用对象之间的循环引用问题
- *  调用方式: `@weakify(object)`实现弱引用转换，`@strongify(object)`实现强引用转换
- *
- *  示例：
- *  @weakify(object)
- *  [obj block:^{
- *      @strongify(object)
- *      strong_object = something;
- *  }];
- */
-#ifndef	weakify
-    #if __has_feature(objc_arc)
-        #define weakify(object)	autoreleasepool{} __weak __typeof__(object) weak##_##object = object;
-    #else
-        #define weakify(object)	autoreleasepool{} __block __typeof__(object) block##_##object = object;
-    #endif
-#endif
-#ifndef	strongify
-    #if __has_feature(objc_arc)
-        #define strongify(object) try{} @finally{} __typeof__(object) strong##_##object = weak##_##object;
-    #else
-        #define strongify(object) try{} @finally{} __typeof__(object) strong##_##object = block##_##object;
-    #endif
-#endif
+#import "PFConfigure.h"
 
 @class PFTabView;
 
@@ -88,19 +38,24 @@
 
 /**
  *  @brief 设置标签总数
+ *  @note
+ *  @param
  *  @return 标签总数
  */
 - (NSInteger)numberOfItemInTabView:(PFTabView *)tabView;
 
 /**
- *  @brief 设置文本尺寸
- *  @return 文本尺寸
+ *  @brief 设置标签尺寸
+ *  @note
+ *  @param
+ *  @return 标签尺寸
  */
-- (CGSize)textSizeOfItemInTabView:(PFTabView *)tabView;
+- (CGSize)sizeOfItemInTabView:(PFTabView *)tabView;
 
 /**
  *  @brief 设置视图控制器
- *  @param index: 序号
+ *  @note
+ *  @param index: 标签的序号
  *  @return 视图控制器
  */
 - (UIViewController *)tabView:(PFTabView *)tabView setupViewControllerAtIndex:(NSInteger)index;
@@ -109,29 +64,46 @@
 
 /**
  *  @brief 动画效果
- *  @detail 当标签即将被选中时
+ *  @note 当标签即将被选中时
+ *  @param
+ *  @detail
+ *  @return
  */
 - (void)animationsWhenItemWillSelectInTabView:(PFTabView *)tabView;
 
 /**
  *  @brief 重设标签按钮
+ *  @note
  *  @param button: 按钮
- *  @param index: 序号
+ *  @param index: 标签的序号
+ *  @return
  */
 - (void)tabView:(PFTabView *)tabView resetItemButton:(UIButton *)button atIndex:(NSInteger)index;
 
 /**
  *  @brief 滑动到边缘
+ *  @note
  *  @param recognizer: 滑动手势
  *  @param orientation: 滑动方向（`left`为左边缘，`right`为右边缘）
+ *  @return
  */
 - (void)tabView:(PFTabView *)tabView scrollViewDidScrollToEdgeWithRecognizer:(UIPanGestureRecognizer *)recognizer orientation:(NSString *)orientation;
 
 /**
  *  @brief 点击标签
- *  @param index: 序号
+ *  @note
+ *  @param index: 标签的序号
+ *  @return
  */
 - (void)tabView:(PFTabView *)tabView didSelectItemAtIndex:(NSInteger)index;
+
+/**
+ *  @brief 重复点击标签
+ *  @note
+ *  @param index: 标签的序号
+ *  @return
+ */
+- (void)tabView:(PFTabView *)tabView repeatSelectItemAtIndex:(NSInteger)index;
 
 @end
 
@@ -139,71 +111,83 @@
 
 ///标签下边线
 @property (nonatomic, strong, readonly) UIView *bottomBorderline;
+///代理
+@property (weak, nonatomic) id<PFTabViewDelegate> delegate;
 
 /**
- *  @brief 初始化
- *  @param delegate: 代理（不使用代理方法时设为nil）
- */
-- (id)initWithFrame:(CGRect)frame delegate:(id<PFTabViewDelegate>)delegate;
-
-/**
- *  @brief 打开标签
+ *  @brief 设置颜色（通过16进制计算）
  *  @note
  *  @param
  *  @return
  */
-- (void)open;
-
-/**
- *  @brief 设置颜色（通过16进制计算）
- */
 + (UIColor *)colorFromHexRGB:(NSString *)string;
 
-#pragma mark -
+#pragma mark - Block Methods
 
 /**
- *  @brief 设置标签总数（使用块方法时必须执行该方法）
+ *  @brief 设置标签总数
+ *  @note
+ *  @param
  *  @return 标签总数
  */
 - (void)numberOfItemUsingBlock:(NSInteger (^)(void))block;
 
 /**
- *  @brief 设置文本尺寸（使用块方法时必须执行该方法）
- *  @return 文本尺寸
+ *  @brief 设置标签尺寸
+ *  @note
+ *  @param
+ *  @return 标签尺寸
  */
-- (void)textSizeOfItemUsingBlock:(CGSize (^)(void))block;
+- (void)sizeOfItemUsingBlock:(CGSize (^)(void))block;
 
 /**
- *  @brief 设置视图控制器（使用块方法时必须执行该方法）
- *  @param index: 序号
+ *  @brief 设置视图控制器
+ *  @note
+ *  @param index: 标签的序号
  *  @return 视图控制器
  */
 - (void)setupViewControllerUsingBlock:(UIViewController *(^)(NSInteger index))block;
 
 /**
  *  @brief 动画效果
- *  @detail 当标签即将被选中时
+ *  @note 当标签即将被选中时
+ *  @param
+ *  @return
  */
 - (void)animationsWhenItemWillSelectUsingBlock:(void (^)(void))block;
 
 /**
  *  @brief 重设标签按钮
+ *  @note
  *  @param button: 按钮
- *  @param index: 序号
+ *  @param index: 标签的序号
+ *  @return
  */
 - (void)resetItemButtonUsingBlock:(void (^)(UIButton *button, NSInteger index))block;
 
 /**
  *  @brief 滑动到边缘
+ *  @note
  *  @param recognizer: 滑动手势
  *  @param orientation: 滑动方向（`left`为左边缘，`right`为右边缘）
+ *  @return
  */
 - (void)scrollViewDidScrollToEdgeUsingBlock:(void (^)(UIPanGestureRecognizer *recognizer, NSString *orientation))block;
 
 /**
  *  @brief 点击标签
- *  @param index: 序号
+ *  @note
+ *  @param index: 标签的序号
+ *  @return
  */
 - (void)didSelectItemUsingBlock:(void (^)(NSInteger index))block;
+
+/**
+ *  @brief 重复点击标签
+ *  @note
+ *  @param index: 标签的序号
+ *  @return
+ */
+- (void)repeatSelectItemUsingBlock:(void (^)(NSInteger index))block;
 
 @end
