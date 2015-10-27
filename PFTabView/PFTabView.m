@@ -7,7 +7,7 @@
 //
 //  https://github.com/PFei-He/PFTabView
 //
-//  vesion: 0.3.0-beta2
+//  vesion: 0.3.0
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -151,52 +151,6 @@ typedef void(^didSelectItemBlock)(NSInteger);
 
 #pragma mark - Private Methods
 
-//布局视图
-- (void)layoutSubviews
-{
-    NSInteger number = 0;//总数
-    if ([self.delegate respondsToSelector:@selector(numberOfItemInTabView:)]) {
-        number = [self.delegate numberOfItemInTabView:self];
-    } else if (self.numberOfItemBlock) {
-        number = self.numberOfItemBlock();
-    } else {
-        NSLog(@"Missing value number of item");
-        return;
-    }
-
-    CGSize textSize;//标签尺寸
-    if ([self.delegate respondsToSelector:@selector(textSizeOfItemInTabView:)]) {
-        textSize = [self.delegate textSizeOfItemInTabView:self];
-    } else if (self.textSizeBlock) {
-        textSize = self.textSizeBlock();
-    } else {
-        NSLog(@"Missing value text size");
-        return;
-    }
-    
-    //加载子视图
-    [self loadSubviewsWithNumber:number textSize:textSize];
-
-    //设置标签视图尺寸
-    itemScrollView.frame = CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, textSize.height);
-
-    //设置主视图尺寸
-    rootScrollView.frame = CGRectMake(self.bounds.origin.x, textSize.height, self.bounds.size.width, self.bounds.size.height - textSize.height);
-
-    //设置下边线尺寸
-    _bottomBorderline.frame = CGRectMake(_bottomBorderline.frame.origin.x, itemScrollView.frame.size.height - 0.5f, itemWidth, 0.5f);
-
-    //设置主视图滚动页尺寸
-    rootScrollView.contentSize = CGSizeMake(self.bounds.size.width * number, 0);
-
-    //滚动到被选视图
-    [rootScrollView setContentOffset:CGPointMake((selectedItem - kTag) * self.bounds.size.width, 0) animated:NO];
-
-    //调整标签被选位置
-    UIButton *button = (UIButton *)[itemScrollView viewWithTag:selectedItem];
-    [self adjustItemScrollViewPointX:button];
-}
-
 //加载子视图
 - (void)loadSubviewsWithNumber:(NSInteger)number textSize:(CGSize)textSize
 {
@@ -263,6 +217,52 @@ typedef void(^didSelectItemBlock)(NSInteger);
 }
 
 #pragma mark - Public Methods
+
+//打开标签
+- (void)open
+{
+    NSInteger number = 0;//总数
+    if ([self.delegate respondsToSelector:@selector(numberOfItemInTabView:)]) {
+        number = [self.delegate numberOfItemInTabView:self];
+    } else if (self.numberOfItemBlock) {
+        number = self.numberOfItemBlock();
+    } else {
+        NSLog(@"Missing value number of item");
+        return;
+    }
+    
+    CGSize textSize;//标签尺寸
+    if ([self.delegate respondsToSelector:@selector(textSizeOfItemInTabView:)]) {
+        textSize = [self.delegate textSizeOfItemInTabView:self];
+    } else if (self.textSizeBlock) {
+        textSize = self.textSizeBlock();
+    } else {
+        NSLog(@"Missing value text size");
+        return;
+    }
+    
+    //加载子视图
+    [self loadSubviewsWithNumber:number textSize:textSize];
+    
+    //设置标签视图尺寸
+    itemScrollView.frame = CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, textSize.height);
+    
+    //设置主视图尺寸
+    rootScrollView.frame = CGRectMake(self.bounds.origin.x, textSize.height, self.bounds.size.width, self.bounds.size.height - textSize.height);
+    
+    //设置下边线尺寸
+    _bottomBorderline.frame = CGRectMake(_bottomBorderline.frame.origin.x, itemScrollView.frame.size.height - 0.5f, itemWidth, 0.5f);
+    
+    //设置主视图滚动页尺寸
+    rootScrollView.contentSize = CGSizeMake(self.bounds.size.width * number, 0);
+    
+    //滚动到被选视图
+    [rootScrollView setContentOffset:CGPointMake((selectedItem - kTag) * self.bounds.size.width, 0) animated:NO];
+    
+    //调整标签被选位置
+    UIButton *button = (UIButton *)[itemScrollView viewWithTag:selectedItem];
+    [self adjustItemScrollViewPointX:button];
+}
 
 //通过16进制计算颜色
 + (UIColor *)colorFromHexRGB:(NSString *)string

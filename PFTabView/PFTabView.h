@@ -7,7 +7,7 @@
 //
 //  https://github.com/PFei-He/PFTabView
 //
-//  vesion: 0.3.0-beta2
+//  vesion: 0.3.0
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -145,6 +145,14 @@
  *  @param delegate: 代理（不使用代理方法时设为nil）
  */
 - (id)initWithFrame:(CGRect)frame delegate:(id<PFTabViewDelegate>)delegate;
+
+/**
+ *  @brief 打开标签
+ *  @note
+ *  @param
+ *  @return
+ */
+- (void)open;
 
 /**
  *  @brief 设置颜色（通过16进制计算）

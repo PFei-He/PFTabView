@@ -67,6 +67,7 @@
             NSLog(@"回复");
         }
     }];
+    [self.tabView open];
     [self.view addSubview:self.tabView];
 }
 
