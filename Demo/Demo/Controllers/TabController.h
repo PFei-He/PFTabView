@@ -1,5 +1,5 @@
 //
-//  AppDelegate.h
+//  TabController.h
 //  Demo
 //
 //  Created by PFei_He on 16/5/9.
@@ -8,10 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface TabController : UIViewController
 
-@property (strong, nonatomic) UIWindow *window;
-
+///视图模型
+@property (assign, nonatomic) NSInteger tabModel;
 
 @end
-
