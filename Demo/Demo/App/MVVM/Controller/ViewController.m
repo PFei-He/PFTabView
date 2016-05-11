@@ -22,6 +22,8 @@
 
 @implementation ViewController
 
+#pragma mark - Life Cycle
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -34,32 +36,22 @@
 #endif
     
     if (!self.tabView) self.tabView = [[PFTabView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.frame.size.height)];
-    
     @weakify_self
     [self.tabView numberOfItemUsingBlock:^NSInteger{
+        return 4;
+    }];
+    [self.tabView sizeOfItemUsingBlock:^CGSize{
         @strongify_self
-        return self.views.count;
+        return CGSizeMake(self.view.bounds.size.width/4, 40);
     }];
     [self.tabView viewForItemUsingBlock:^UIView *(NSInteger index) {
         @strongify_self
         return self.views[index];
     }];
-    [self.tabView sizeOfItemUsingBlock:^CGSize{
-        @strongify_self
-        return CGSizeMake((self.view.frame.size.width) / 2, 40.0f);
+    [self.tabView resetItemUsingBlock:^(UIButton *item, NSInteger index) {
+        [item setTitle:@[@"1", @"2", @"3", @"4"][index] forState:UIControlStateNormal];
     }];
-    [self.tabView didSelectItemUsingBlock:^(NSInteger index) {
-        if (index == 0) {
-            NSLog(@"首页");
-        } else if (index == 1) {
-            NSLog(@"新闻");
-        } else if (index == 2) {
-            NSLog(@"热点");
-        } else if (index == 3) {
-            NSLog(@"回复");
-        }
-    }];
-    [self.tabView open];
+    [self.tabView setup];
     [self.view addSubview:self.tabView];
 }
 
@@ -68,6 +60,8 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+#pragma mark - Views Management
 
 - (NSArray *)views
 {
@@ -88,23 +82,6 @@
     self.reply.tabModel = 3;
     
     return @[self.home, self.news, self.hotspot, self.reply];
-}
-
-#pragma mark - PFTabViewDelegate Methods
-
-- (NSInteger)numberOfItemInTabView:(PFTabView *)tabView
-{
-    return 2;
-}
-
-- (CGSize)sizeOfItemInTabView:(PFTabView *)tabView
-{
-    return CGSizeMake(self.view.bounds.size.width/2, 40);
-}
-
-- (UIViewController *)tabView:(PFTabView *)tabView setupViewControllerAtIndex:(NSInteger)index
-{
-    return self.views[index];
 }
 
 @end

@@ -142,12 +142,12 @@
 @property (nonatomic, weak)     id<PFTabViewDelegate>   delegate;
 
 /**
- *  @brief 打开标签
- *  @note
- *  @param
- *  @return
+ *  @brief 设定标签
+ *  @note 无
+ *  @param 无
+ *  @return 无
  */
-- (void)open;
+- (void)setup;
 
 /**
  *  @brief 设置颜色（通过16进制计算）

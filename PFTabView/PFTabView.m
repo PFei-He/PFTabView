@@ -106,7 +106,7 @@ typedef void(^block4)();
 
 @implementation PFTabView
 
-#pragma mark - Initialization
+#pragma mark - Life Cycle
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -168,6 +168,71 @@ typedef void(^block4)();
         
         //添加滑动事件
         [rootScrollView.panGestureRecognizer addTarget:self action:@selector(pan:)];
+    }
+}
+
+#pragma mark - Events Management
+
+//点击标签的按钮
+- (void)buttonTapped:(UIButton *)button
+{
+    //如果点击的标签文字显示不全，调整滚动视图x坐标使用使标签文字显示完整
+    [self adjustItemScrollViewPointX:button];
+    
+    //如果更换按钮
+    if (button.tag != selectedItem) {
+        //取之前的按钮
+        UIButton *lastButton = (UIButton *)[itemScrollView viewWithTag:selectedItem];
+        lastButton.selected = NO;
+        //赋值按钮ID
+        selectedItem = button.tag;
+    }
+    
+    if (!button.selected) {//按钮选中状态
+        button.selected = YES;
+        
+        [UIView animateWithDuration:0.25 animations:^{
+            //动画效果
+            if ([self.delegate respondsToSelector:@selector(animationsWhenItemWillSelectInTabView:)]) {
+                [self.delegate animationsWhenItemWillSelectInTabView:self];
+            } else if (self.animationsBlock) {
+                self.animationsBlock();
+            }
+        } completion:^(BOOL finished) {
+            if (finished) {
+                if (!isRootScroll) {//设置新标签页出现
+                    [rootScrollView setContentOffset:CGPointMake((button.tag - kTag) * self.bounds.size.width, 0) animated:YES];
+                }
+                isRootScroll = NO;
+                
+                //响应点击事件
+                if ([self.delegate respondsToSelector:@selector(tabView:didSelectItemAtIndex:)]) {//监听代理并回调
+                    [self.delegate tabView:self didSelectItemAtIndex:selectedItem - kTag];
+                } else if (self.didSelectBlock) {//监听块并回调
+                    self.didSelectBlock(selectedItem - kTag);
+                }
+            }
+        }];
+    } else {//重复点击选中按钮
+        
+    }
+}
+
+//滑动事件
+-(void)pan:(UIPanGestureRecognizer *)recognizer
+{
+    if (rootScrollView.contentOffset.x <= 0) {//滑道左边缘时
+        if ([self.delegate respondsToSelector:@selector(tabView:scrollViewDidScrollToEdgeWithRecognizer:orientation:)]) {//监听代理并回调
+            [self.delegate tabView:self scrollViewDidScrollToEdgeWithRecognizer:recognizer orientation:@"left"];
+        } else if (self.scrollToEdgeBlock) {//监听块并回调
+            self.scrollToEdgeBlock(recognizer, @"left");
+        }
+    } else if (rootScrollView.contentOffset.x >= rootScrollView.contentSize.width - rootScrollView.bounds.size.width) {//滑道右边缘时
+        if ([self.delegate respondsToSelector:@selector(tabView:scrollViewDidScrollToEdgeWithRecognizer:orientation:)]) {//监听代理并回调
+            [self.delegate tabView:self scrollViewDidScrollToEdgeWithRecognizer:recognizer orientation:@"right"];
+        } else if (self.scrollToEdgeBlock) {//监听块并回调
+            self.scrollToEdgeBlock(recognizer, @"right");
+        }
     }
 }
 
@@ -239,8 +304,8 @@ typedef void(^block4)();
 
 #pragma mark - Public Methods
 
-//打开标签
-- (void)open
+//设定标签
+- (void)setup
 {
     NSInteger number = 0;//总数
     if ([self.delegate respondsToSelector:@selector(numberOfItemInTabView:)]) {
@@ -310,10 +375,8 @@ typedef void(^block4)();
 //版本号
 - (NSString *)version
 {
-    return [NSString stringWithFormat:@"[ %@ ] current version: 0.4.0-beta3", self.classForCoder];
+    return [NSString stringWithFormat:@"[ %@ ] current version: 0.4.0", self.classForCoder];
 }
-
-#pragma mark -
 
 kBLOCK1(numberOfItem, NSInteger, void, self.numberBlock, nil)
 kBLOCK1(viewForItem, UIView *, NSInteger, self.viewBlock, nil)
@@ -323,72 +386,7 @@ kBLOCK2(resetItem, void, UIButton *, NSInteger, self.itemBlock, nil)
 kBLOCK2(scrollViewDidScrollToEdge, void, UIPanGestureRecognizer *, NSString *, self.scrollToEdgeBlock, nil)
 kBLOCK1(didSelectItem, void, NSInteger, self.didSelectBlock, nil)
 
-#pragma mark - Events Management
-
-//点击标签的按钮
-- (void)buttonTapped:(UIButton *)button
-{
-    //如果点击的标签文字显示不全，调整滚动视图x坐标使用使标签文字显示完整
-    [self adjustItemScrollViewPointX:button];
-    
-    //如果更换按钮
-    if (button.tag != selectedItem) {
-        //取之前的按钮
-        UIButton *lastButton = (UIButton *)[itemScrollView viewWithTag:selectedItem];
-        lastButton.selected = NO;
-        //赋值按钮ID
-        selectedItem = button.tag;
-    }
-    
-    if (!button.selected) {//按钮选中状态
-        button.selected = YES;
-        
-        [UIView animateWithDuration:0.25 animations:^{
-            //动画效果
-            if ([self.delegate respondsToSelector:@selector(animationsWhenItemWillSelectInTabView:)]) {
-                [self.delegate animationsWhenItemWillSelectInTabView:self];
-            } else if (self.animationsBlock) {
-                self.animationsBlock();
-            }
-        } completion:^(BOOL finished) {
-            if (finished) {
-                if (!isRootScroll) {//设置新标签页出现
-                    [rootScrollView setContentOffset:CGPointMake((button.tag - kTag) * self.bounds.size.width, 0) animated:YES];
-                }
-                isRootScroll = NO;
-                
-                //响应点击事件
-                if ([self.delegate respondsToSelector:@selector(tabView:didSelectItemAtIndex:)]) {//监听代理并回调
-                    [self.delegate tabView:self didSelectItemAtIndex:selectedItem - kTag];
-                } else if (self.didSelectBlock) {//监听块并回调
-                    self.didSelectBlock(selectedItem - kTag);
-                }
-            }
-        }];
-    } else {//重复点击选中按钮
-        
-    }
-}
-
-//滑动事件
--(void)pan:(UIPanGestureRecognizer *)recognizer
-{
-    if (rootScrollView.contentOffset.x <= 0) {//滑道左边缘时
-        if ([self.delegate respondsToSelector:@selector(tabView:scrollViewDidScrollToEdgeWithRecognizer:orientation:)]) {//监听代理并回调
-            [self.delegate tabView:self scrollViewDidScrollToEdgeWithRecognizer:recognizer orientation:@"left"];
-        } else if (self.scrollToEdgeBlock) {//监听块并回调
-            self.scrollToEdgeBlock(recognizer, @"left");
-        }
-    } else if (rootScrollView.contentOffset.x >= rootScrollView.contentSize.width - rootScrollView.bounds.size.width) {//滑道右边缘时
-        if ([self.delegate respondsToSelector:@selector(tabView:scrollViewDidScrollToEdgeWithRecognizer:orientation:)]) {//监听代理并回调
-            [self.delegate tabView:self scrollViewDidScrollToEdgeWithRecognizer:recognizer orientation:@"right"];
-        } else if (self.scrollToEdgeBlock) {//监听块并回调
-            self.scrollToEdgeBlock(recognizer, @"right");
-        }
-    }
-}
-
-#pragma mark - UIScrollViewDelegate
+#pragma mark - UIScrollViewDelegate Methods
 
 //停止减速
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
