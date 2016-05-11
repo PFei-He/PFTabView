@@ -1,14 +1,14 @@
 //
-//  TabController.h
+//  TabView.h
 //  Demo
 //
-//  Created by PFei_He on 16/5/9.
+//  Created by PFei_He on 16/5/11.
 //  Copyright © 2016年 PFei_He. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 
-@interface TabController : UIViewController
+@interface TabView : UIView
 
 ///视图模型
 @property (assign, nonatomic) NSInteger tabModel;

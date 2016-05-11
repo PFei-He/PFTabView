@@ -11,12 +11,10 @@
 		4506F97B1CE0369400381D9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4506F97A1CE0369400381D9A /* AppDelegate.m */; };
 		4506F9831CE0369400381D9A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4506F9821CE0369400381D9A /* Assets.xcassets */; };
 		4506F9901CE036E500381D9A /* PFTabView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4506F98F1CE036E500381D9A /* PFTabView.m */; };
-		4506F9BF1CE0386300381D9A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4506F9BE1CE0386300381D9A /* ViewController.m */; };
-		4506F9C81CE038DA00381D9A /* TabController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4506F9C71CE038DA00381D9A /* TabController.m */; };
-		4506F9CB1CE039FD00381D9A /* TabModel1.m in Sources */ = {isa = PBXBuildFile; fileRef = 4506F9CA1CE039FD00381D9A /* TabModel1.m */; };
-		4506F9CE1CE03A0700381D9A /* TabModel2.m in Sources */ = {isa = PBXBuildFile; fileRef = 4506F9CD1CE03A0700381D9A /* TabModel2.m */; };
-		4506F9D31CE05B9600381D9A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4506F9CF1CE05B9600381D9A /* LaunchScreen.storyboard */; };
-		4506F9D41CE05B9600381D9A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4506F9D11CE05B9600381D9A /* Main.storyboard */; };
+		459B9D821CE304ED001FCFFA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 459B9D731CE304ED001FCFFA /* ViewController.m */; };
+		459B9D851CE304ED001FCFFA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 459B9D7C1CE304ED001FCFFA /* LaunchScreen.storyboard */; };
+		459B9D861CE304ED001FCFFA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 459B9D7E1CE304ED001FCFFA /* Main.storyboard */; };
+		459B9D891CE30528001FCFFA /* TabView.m in Sources */ = {isa = PBXBuildFile; fileRef = 459B9D881CE30528001FCFFA /* TabView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,16 +26,12 @@
 		4506F9871CE0369400381D9A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4506F98E1CE036E500381D9A /* PFTabView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PFTabView.h; sourceTree = "<group>"; };
 		4506F98F1CE036E500381D9A /* PFTabView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PFTabView.m; sourceTree = "<group>"; };
-		4506F9BD1CE0386300381D9A /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		4506F9BE1CE0386300381D9A /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		4506F9C61CE038DA00381D9A /* TabController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabController.h; sourceTree = "<group>"; };
-		4506F9C71CE038DA00381D9A /* TabController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabController.m; sourceTree = "<group>"; };
-		4506F9C91CE039FD00381D9A /* TabModel1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabModel1.h; sourceTree = "<group>"; };
-		4506F9CA1CE039FD00381D9A /* TabModel1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabModel1.m; sourceTree = "<group>"; };
-		4506F9CC1CE03A0700381D9A /* TabModel2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabModel2.h; sourceTree = "<group>"; };
-		4506F9CD1CE03A0700381D9A /* TabModel2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabModel2.m; sourceTree = "<group>"; };
-		4506F9D01CE05B9600381D9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		4506F9D21CE05B9600381D9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		459B9D721CE304ED001FCFFA /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		459B9D731CE304ED001FCFFA /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		459B9D7D1CE304ED001FCFFA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		459B9D7F1CE304ED001FCFFA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		459B9D871CE30528001FCFFA /* TabView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TabView.h; sourceTree = "<group>"; };
+		459B9D881CE30528001FCFFA /* TabView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,11 +67,9 @@
 			children = (
 				4506F9791CE0369400381D9A /* AppDelegate.h */,
 				4506F97A1CE0369400381D9A /* AppDelegate.m */,
-				4506F9B41CE037E700381D9A /* Controllers */,
-				4506F9B51CE037E700381D9A /* TabModels */,
-				4506F9CF1CE05B9600381D9A /* LaunchScreen.storyboard */,
-				4506F9D11CE05B9600381D9A /* Main.storyboard */,
 				4506F9821CE0369400381D9A /* Assets.xcassets */,
+				459B9D6D1CE304ED001FCFFA /* App */,
+				459B9D801CE304ED001FCFFA /* Resources */,
 				4506F9871CE0369400381D9A /* Info.plist */,
 				4506F9761CE0369400381D9A /* Supporting Files */,
 			);
@@ -102,26 +94,64 @@
 			path = ../PFTabView;
 			sourceTree = "<group>";
 		};
-		4506F9B41CE037E700381D9A /* Controllers */ = {
+		459B9D6D1CE304ED001FCFFA /* App */ = {
 			isa = PBXGroup;
 			children = (
-				4506F9BD1CE0386300381D9A /* ViewController.h */,
-				4506F9BE1CE0386300381D9A /* ViewController.m */,
-				4506F9C61CE038DA00381D9A /* TabController.h */,
-				4506F9C71CE038DA00381D9A /* TabController.m */,
+				459B9D6E1CE304ED001FCFFA /* MVVM */,
+				459B9D7B1CE304ED001FCFFA /* Storyboard */,
 			);
-			path = Controllers;
+			path = App;
 			sourceTree = "<group>";
 		};
-		4506F9B51CE037E700381D9A /* TabModels */ = {
+		459B9D6E1CE304ED001FCFFA /* MVVM */ = {
 			isa = PBXGroup;
 			children = (
-				4506F9C91CE039FD00381D9A /* TabModel1.h */,
-				4506F9CA1CE039FD00381D9A /* TabModel1.m */,
-				4506F9CC1CE03A0700381D9A /* TabModel2.h */,
-				4506F9CD1CE03A0700381D9A /* TabModel2.m */,
+				459B9D6F1CE304ED001FCFFA /* Controller */,
+				459B9D741CE304ED001FCFFA /* Model */,
+				459B9D7A1CE304ED001FCFFA /* View */,
 			);
-			path = TabModels;
+			path = MVVM;
+			sourceTree = "<group>";
+		};
+		459B9D6F1CE304ED001FCFFA /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				459B9D721CE304ED001FCFFA /* ViewController.h */,
+				459B9D731CE304ED001FCFFA /* ViewController.m */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		459B9D741CE304ED001FCFFA /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		459B9D7A1CE304ED001FCFFA /* View */ = {
+			isa = PBXGroup;
+			children = (
+				459B9D871CE30528001FCFFA /* TabView.h */,
+				459B9D881CE30528001FCFFA /* TabView.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		459B9D7B1CE304ED001FCFFA /* Storyboard */ = {
+			isa = PBXGroup;
+			children = (
+				459B9D7C1CE304ED001FCFFA /* LaunchScreen.storyboard */,
+				459B9D7E1CE304ED001FCFFA /* Main.storyboard */,
+			);
+			path = Storyboard;
+			sourceTree = "<group>";
+		};
+		459B9D801CE304ED001FCFFA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -181,9 +211,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4506F9D41CE05B9600381D9A /* Main.storyboard in Resources */,
-				4506F9D31CE05B9600381D9A /* LaunchScreen.storyboard in Resources */,
+				459B9D861CE304ED001FCFFA /* Main.storyboard in Resources */,
 				4506F9831CE0369400381D9A /* Assets.xcassets in Resources */,
+				459B9D851CE304ED001FCFFA /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,30 +225,28 @@
 			buildActionMask = 2147483647;
 			files = (
 				4506F97B1CE0369400381D9A /* AppDelegate.m in Sources */,
-				4506F9CE1CE03A0700381D9A /* TabModel2.m in Sources */,
 				4506F9901CE036E500381D9A /* PFTabView.m in Sources */,
-				4506F9BF1CE0386300381D9A /* ViewController.m in Sources */,
-				4506F9C81CE038DA00381D9A /* TabController.m in Sources */,
 				4506F9781CE0369400381D9A /* main.m in Sources */,
-				4506F9CB1CE039FD00381D9A /* TabModel1.m in Sources */,
+				459B9D891CE30528001FCFFA /* TabView.m in Sources */,
+				459B9D821CE304ED001FCFFA /* ViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		4506F9CF1CE05B9600381D9A /* LaunchScreen.storyboard */ = {
+		459B9D7C1CE304ED001FCFFA /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				4506F9D01CE05B9600381D9A /* Base */,
+				459B9D7D1CE304ED001FCFFA /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
-		4506F9D11CE05B9600381D9A /* Main.storyboard */ = {
+		459B9D7E1CE304ED001FCFFA /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				4506F9D21CE05B9600381D9A /* Base */,
+				459B9D7F1CE304ED001FCFFA /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";

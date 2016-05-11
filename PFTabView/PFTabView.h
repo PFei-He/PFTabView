@@ -94,14 +94,14 @@
  *  @brief 设置文本尺寸
  *  @return 文本尺寸
  */
-- (CGSize)textSizeOfItemInTabView:(PFTabView *)tabView;
+- (CGSize)sizeOfItemInTabView:(PFTabView *)tabView;
 
 /**
  *  @brief 设置视图控制器
  *  @param index: 序号
  *  @return 视图控制器
  */
-- (UIViewController *)tabView:(PFTabView *)tabView setupViewControllerAtIndex:(NSInteger)index;
+- (UIView *)tabView:(PFTabView *)tabView viewForItemAtIndex:(NSInteger)index;
 
 @optional
 
@@ -112,11 +112,11 @@
 - (void)animationsWhenItemWillSelectInTabView:(PFTabView *)tabView;
 
 /**
- *  @brief 重设标签按钮
- *  @param button: 按钮
+ *  @brief 重设标签
+ *  @param item: 标签
  *  @param index: 序号
  */
-- (void)tabView:(PFTabView *)tabView resetItemButton:(UIButton *)button atIndex:(NSInteger)index;
+- (void)tabView:(PFTabView *)tabView resetItem:(UIButton *)item atIndex:(NSInteger)index;
 
 /**
  *  @brief 滑动到边缘
@@ -138,11 +138,8 @@
 ///标签下边线
 @property (nonatomic, strong, readonly) UIView *bottomBorderline;
 
-/**
- *  @brief 初始化
- *  @param delegate: 代理（不使用代理方法时设为nil）
- */
-- (id)initWithFrame:(CGRect)frame delegate:(id<PFTabViewDelegate>)delegate;
+///代理
+@property (nonatomic, weak)     id<PFTabViewDelegate>   delegate;
 
 /**
  *  @brief 打开标签
@@ -159,9 +156,9 @@
 
 /**
  *  @brief 版本号
- *  @note <#无#>
- *  @param <#无#>
- *  @return <#无#>
+ *  @note 无
+ *  @param 无
+ *  @return 版本号
  */
 - (NSString *)version;
 
@@ -177,14 +174,14 @@
  *  @brief 设置文本尺寸（使用块方法时必须执行该方法）
  *  @return 文本尺寸
  */
-- (void)textSizeOfItemUsingBlock:(CGSize (^)(void))block;
+- (void)sizeOfItemUsingBlock:(CGSize (^)(void))block;
 
 /**
  *  @brief 设置视图控制器（使用块方法时必须执行该方法）
  *  @param index: 序号
  *  @return 视图控制器
  */
-- (void)setupViewControllerUsingBlock:(UIViewController *(^)(NSInteger index))block;
+- (void)viewForItemUsingBlock:(UIView *(^)(NSInteger index))block;
 
 /**
  *  @brief 动画效果
@@ -193,11 +190,11 @@
 - (void)animationsWhenItemWillSelectUsingBlock:(void (^)(void))block;
 
 /**
- *  @brief 重设标签按钮
- *  @param button: 按钮
+ *  @brief 重设标签
+ *  @param item: 标签
  *  @param index: 序号
  */
-- (void)resetItemButtonUsingBlock:(void (^)(UIButton *button, NSInteger index))block;
+- (void)resetItemUsingBlock:(void (^)(UIButton *item, NSInteger index))block;
 
 /**
  *  @brief 滑动到边缘
