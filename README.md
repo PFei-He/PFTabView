@@ -1,5 +1,10 @@
 [PFTabView](https://github.com/PFei-He/PFTabView)
 ===
+ 
+[![License MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://raw.githubusercontent.com/PFei-He/PFTabView/master/LICENSE)
+[![Support](https://img.shields.io/badge/support-iOS%207%2B%20-blue.svg?style=flat)](https://www.apple.com/nl/ios/)
+[![Cocoapods Compatible](https://img.shields.io/cocoapods/v/PFTabView.svg)](https://img.shields.io/cocoapods/v/PFTabView.svg)
+ 
 可滑动的标签
 
 版本
@@ -12,7 +17,13 @@
 PFTabView是一款简单接入便可实现新闻客户端顶部滑动标签的开源库。
 
 #### 关于CocoaPods
-本项目并未使用CocoaPods进行版本管理，后续会考虑加入。
+---
+```
+target 'YourTarget' do
+    platform:ios, '7.0'
+    pod 'PFTabView', '~> 0.4'
+end
+```
 
 示例代码
 ---
