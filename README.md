@@ -1,4 +1,4 @@
-PFTabView
+[PFTabView](https://github.com/PFei-He/PFTabView)
 ===
 可滑动的标签
 
@@ -17,8 +17,8 @@ PFTabView是一款简单接入便可实现新闻客户端顶部滑动标签的�
 示例代码
 ---
 ```objective-c
-weakify_self
-    [self.tabView numberOfItemUsingBlock:^NSInteger{
+@weakify_self
+[self.tabView numberOfItemUsingBlock:^NSInteger{
     return 4;
 }];
 ```
