@@ -17,7 +17,6 @@
 PFTabView是一款简单接入便可实现新闻客户端顶部滑动标签的开源库。
 
 #### 关于CocoaPods
----
 ```
 target 'YourTarget' do
     platform:ios, '7.0'
